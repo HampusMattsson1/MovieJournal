@@ -10,14 +10,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieJournal">
         <activity
-
+            android:name=".signin"
+            android:exported="false" />
+        <activity
             android:name=".films"
             android:exported="false">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".profile"

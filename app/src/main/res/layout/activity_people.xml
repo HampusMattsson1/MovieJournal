@@ -41,10 +41,10 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:backgroundTint="#00FFFFFF"
-            android:tint="#A11C1C"
             android:scaleType="centerInside"
             android:translationX="85dp"
-            app:srcCompat="@drawable/friends" />
+            app:srcCompat="@drawable/friends"
+            app:tint="#A11C1C" />
 
         <ImageButton
             android:id="@+id/imageButton3"

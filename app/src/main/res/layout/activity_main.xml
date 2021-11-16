@@ -62,9 +62,9 @@
             android:adjustViewBounds="true"
             android:backgroundTint="#00FFFFFF"
             android:scaleType="centerInside"
-            android:tint="#A11C1C"
             android:translationX="170dp"
-            app:srcCompat="@drawable/movie" />
+            app:srcCompat="@drawable/movie"
+            app:tint="#A11C1C" />
 
         <ImageButton
             android:id="@+id/imageButton4"

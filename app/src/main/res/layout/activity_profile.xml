@@ -71,10 +71,10 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:backgroundTint="#00FFFFFF"
-            android:tint="#A11C1C"
             android:scaleType="centerInside"
             android:translationX="330dp"
-            app:srcCompat="@drawable/profile" />
+            app:srcCompat="@drawable/profile"
+            app:tint="#A11C1C" />
 
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 

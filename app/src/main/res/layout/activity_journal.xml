@@ -31,10 +31,10 @@
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:backgroundTint="#00FFFFFF"
-            android:tint="#A11C1C"
             android:cropToPadding="false"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/journal" />
+            app:srcCompat="@drawable/journal"
+            app:tint="#A11C1C" />
 
         <ImageButton
             android:id="@+id/imageButton2"
