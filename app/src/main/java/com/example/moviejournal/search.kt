@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
+import android.widget.Button
 
 class search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,14 @@ class search : AppCompatActivity() {
         menuButton5 = findViewById(R.id.imageButton5)
         menuButton5.setOnClickListener {
             val a = Intent(this, profile::class.java)
+            startActivity(a)
+        }
+
+        // temp code
+        // var temp = Button(this)
+        var temp = findViewById<Button>(R.id.button)
+        temp.setOnClickListener {
+            val a = Intent(this, login::class.java)
             startActivity(a)
         }
     }

@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MovieJournal">
         <activity
+            android:name=".login"
+            android:exported="false" />
+        <activity
             android:name=".signin"
             android:exported="false" />
         <activity

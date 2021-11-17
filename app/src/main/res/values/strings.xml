@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MovieJournal</string>
+    <string name="button">Button</string>
+    <string name="go_to_login">go to login</string>
 </resources>
