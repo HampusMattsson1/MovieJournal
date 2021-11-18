@@ -29,7 +29,7 @@ class journal : AppCompatActivity() {
         var menuButton3 = ImageButton(this)
         menuButton3 = findViewById(R.id.imageButton3)
         menuButton3.setOnClickListener {
-            val a = Intent(this, MainActivity::class.java)
+            val a = Intent(this, films::class.java)
             startActivity(a)
         }
         var menuButton4 = ImageButton(this)

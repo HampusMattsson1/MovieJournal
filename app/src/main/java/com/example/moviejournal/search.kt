@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.Button
+import android.widget.Toast
 
 class search : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,7 +27,7 @@ class search : AppCompatActivity() {
         var menuButton3 = ImageButton(this)
         menuButton3 = findViewById(R.id.imageButton3)
         menuButton3.setOnClickListener {
-            val a = Intent(this, MainActivity::class.java)
+            val a = Intent(this, films::class.java)
             startActivity(a)
         }
         var menuButton4 = ImageButton(this)
@@ -48,6 +49,14 @@ class search : AppCompatActivity() {
         temp.setOnClickListener {
             val a = Intent(this, login::class.java)
             startActivity(a)
+        }
+        var api = findViewById<Button>(R.id.button3)
+        api.setOnClickListener {
+//            val a = Intent(this, login::class.java)
+//            startActivity(a)
+            var msg = "hej"
+            Toast.makeText(applicationContext,msg,Toast.LENGTH_SHORT).show()
+//            run("https://imdb-api.com/en/API/SearchMovie/k_12345678/inception 2010")
         }
     }
 }

@@ -11,7 +11,7 @@ class films : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_films)
 
         var menuButton1 = ImageButton(this)
         menuButton1 = findViewById(R.id.imageButton1)
