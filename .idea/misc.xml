@@ -4,6 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/activity_splash_screen.xml" value="0.1" />
+        <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/fragment_friends.xml" value="0.15715579710144928" />
+        <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/fragment_journal.xml" value="0.15715579710144928" />
+        <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/fragment_movies.xml" value="0.15715579710144928" />
+        <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/fragment_profile.xml" value="0.161231884057971" />
+        <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal/app/src/main/res/layout/fragment_search.xml" value="0.2" />
         <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal2/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal2/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/33601/Desktop/Cours/Mobile Applications Development/MovieJournal2/app/src/main/res/layout/activity_sign_up.xml" value="0.264" />
