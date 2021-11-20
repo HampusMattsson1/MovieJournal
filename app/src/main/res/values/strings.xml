@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MovieJournal2</string>
+    <string name="label">Username</string>
+    <string name="passwordlabel">Password</string>
+    <string name="log_in">Log In</string>
+    <string name="don_t_have_an_account">Don\'t have an account ?</string>
+    <string name="register">Register</string>
+    <string name="MovieJournal">MovieJournal</string>
+    <string name="email">Email</string>
+    <string name="already_have_an_account">Already have an account ?</string>
+    <string name="you_are_logged_in_successfully">You are logged in successfully</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/ic_journal"
+        android:icon="@drawable/ic_journal"
+        android:title="Journal"/>
+
+    <item
+        android:id="@+id/ic_people"
+        android:icon="@drawable/ic_baseline_people_alt_24"
+        android:title="Friends"/>
+
+    <item
+        android:id="@+id/ic_movies"
+        android:icon="@drawable/ic_baseline_local_movies_24"
+        android:title="Movies"/>
+
+    <item
+        android:id="@+id/ic_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search"/>
+
+    <item
+        android:id="@+id/ic_profile"
+        android:icon="@drawable/ic_account"
+        android:title="Profile"/>
+
+</menu>
