@@ -1,10 +1,18 @@
 package com.moviejournal2.fragments
 
+import MoviesAdapter
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.moviejournal2.MainActivity
+import com.moviejournal2.Movie
+import com.moviejournal2.MoviesRepository
 import com.moviejournal2.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -22,21 +30,49 @@ class MoviesFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var popularMovies: RecyclerView
+    private lateinit var popularMoviesAdapter: MoviesAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+    }
+
+    private fun onPopularMoviesFetched(movies: List<Movie>){
+        popularMoviesAdapter.updateMovies(movies)
+    }
+
+    private fun onError(){
+        Toast.makeText(requireActivity(), getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        val rootView = inflater.inflate(R.layout.fragment_movies, container, false)
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movies, container, false)
+        val recyclerView = rootView.findViewById<RecyclerView>(R.id.popular_movies)
+        recyclerView.layoutManager = LinearLayoutManager(
+            requireActivity(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        popularMoviesAdapter = MoviesAdapter(listOf())
+        recyclerView.adapter = popularMoviesAdapter
+
+        MoviesRepository.getPopularMovies(
+            onSuccess = ::onPopularMoviesFetched,
+            onError = ::onError
+        )
+        return rootView
     }
+
+
 
     companion object {
         /**
