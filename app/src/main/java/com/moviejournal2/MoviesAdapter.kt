@@ -9,7 +9,8 @@ import com.moviejournal2.Movie
 import com.moviejournal2.R
 
 class MoviesAdapter(
-    private var movies: List<Movie>
+    //The list of movies is dynamic, new movies can be added
+    private var movies: MutableList<Movie>
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -25,9 +26,13 @@ class MoviesAdapter(
         holder.bind(movies[position])
     }
 
-    fun updateMovies(movies: List<Movie>) {
-        this.movies = movies
-        notifyDataSetChanged()
+    fun appendMovies(movies: List<Movie>) {
+        this.movies.addAll(movies)
+        //We don't refresh the entire list
+        notifyItemRangeInserted(
+            this.movies.size,
+            movies.size - 1
+        )
     }
 
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

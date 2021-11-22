@@ -32,6 +32,9 @@ class MoviesFragment : Fragment() {
 
     private lateinit var popularMovies: RecyclerView
     private lateinit var popularMoviesAdapter: MoviesAdapter
+    private lateinit var popularMoviesLayoutManager: LinearLayoutManager
+
+    private var popularMoviesPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +45,38 @@ class MoviesFragment : Fragment() {
 
     }
 
+    private fun getPopularMovies(){
+        MoviesRepository.getPopularMovies(
+            popularMoviesPage,
+            ::onPopularMoviesFetched,
+            ::onError
+        )
+    }
+
+    private fun attachPopularMoviesOnScrollListener(){
+        popularMovies.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
+                //total nbr of movies inside of popularMoviesAdapter
+                val totalItemCount = popularMoviesLayoutManager.itemCount
+                //current nb of child views attached to recyclerview
+                val visibleItemCount = popularMoviesLayoutManager.childCount
+                //position of the first visible item in list
+                val firstVisibleItem = popularMoviesLayoutManager.findFirstVisibleItemPosition()
+
+                //if the user has scrolled past halfway + 1 buffered value of visibleItemCount
+                if(firstVisibleItem + visibleItemCount >= totalItemCount/2){
+                    //scroll listener disabled
+                    popularMovies.removeOnScrollListener(this)
+                    popularMoviesPage++
+                    getPopularMovies()
+                }
+            }
+        })
+    }
+
     private fun onPopularMoviesFetched(movies: List<Movie>){
-        popularMoviesAdapter.updateMovies(movies)
+        popularMoviesAdapter.appendMovies(movies)
+        attachPopularMoviesOnScrollListener()
     }
 
     private fun onError(){
@@ -56,19 +89,18 @@ class MoviesFragment : Fragment() {
     ): View {
         val rootView = inflater.inflate(R.layout.fragment_movies, container, false)
         // Inflate the layout for this fragment
-        val recyclerView = rootView.findViewById<RecyclerView>(R.id.popular_movies)
-        recyclerView.layoutManager = LinearLayoutManager(
+        popularMovies = rootView.findViewById<RecyclerView>(R.id.popular_movies)
+        popularMoviesLayoutManager = LinearLayoutManager(
             requireActivity(),
             LinearLayoutManager.HORIZONTAL,
             false
         )
-        popularMoviesAdapter = MoviesAdapter(listOf())
-        recyclerView.adapter = popularMoviesAdapter
+        popularMovies.layoutManager = popularMoviesLayoutManager
+        popularMoviesAdapter = MoviesAdapter(mutableListOf())
+        popularMovies.adapter = popularMoviesAdapter
 
-        MoviesRepository.getPopularMovies(
-            onSuccess = ::onPopularMoviesFetched,
-            onError = ::onError
-        )
+        getPopularMovies()
+
         return rootView
     }
 
