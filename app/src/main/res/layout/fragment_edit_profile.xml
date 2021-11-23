@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.EditProfileFragment">
-
-    <!-- TODO: Update blank fragment layout -->
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
@@ -22,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:text="Profile"
+            android:text="Edit Profile"
             android:textColor="#FF6200EE"
             android:textSize="20dp"
             android:textStyle="bold"
@@ -32,61 +30,54 @@
             app:layout_constraintTop_toTopOf="parent" />
     </com.google.android.material.navigation.NavigationView>
 
-
-    <TextView
-        android:id="@+id/usernameText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Username"
-        tools:layout_editor_absoluteX="175dp"
-        tools:layout_editor_absoluteY="305dp" />
-
     <ImageView
         android:id="@+id/profilePic"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_marginStart="104dp"
-        android:src="@drawable/ic_baseline_account_box_24"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="83dp" />
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/ic_baseline_account_box_24" />
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="250dp"
+        android:text="Username" />
 
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="30dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="280dp"
         android:hint="Username"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:padding="20dp"
-        android:text=""
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameText" />
+        android:text="" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/favouritemovie"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="156dp"
-        android:layout_marginTop="24dp"
-        android:text="Favourite movie"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        android:layout_marginTop="360dp"
+        android:text="Favourite movie" />
 
     <EditText
         android:id="@+id/favMovie"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="400dp"
         android:hint="Movie Name"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
         android:padding="20dp"
-        android:text=""
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+        android:text="" />
 
     <TextView
         android:id="@+id/textView7"
@@ -95,32 +86,24 @@
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="152dp"
-        android:layout_marginTop="29dp"
-        android:text="Favourite genres"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/favMovie" />
+        android:layout_marginTop="500dp"
+        android:text="Favourite genres"/>
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="181dp"
-        android:layout_marginTop="14dp"
-        android:text="text"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        android:layout_marginTop="525dp"
+        android:text="text"/>
 
     <Button
         android:id="@+id/save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="20dp"
-        android:text="Save"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chip" />
+        android:layout_marginTop="600dp"
+        android:text="Save"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
