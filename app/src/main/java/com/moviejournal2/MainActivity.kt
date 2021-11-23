@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val bottom_nav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
+        bottom_nav.selectedItemId = R.id.ic_movies
         bottom_nav.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.ic_movies -> replaceFragment(moviesFragment)
