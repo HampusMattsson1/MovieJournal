@@ -85,23 +85,22 @@ class ProfileFragment : Fragment() {
             reference.get().addOnSuccessListener {
 
                 if (it.exists()) {
-                    // Try to log how many users there are
-                    Log.d("test", "testsave")
-                    Log.d("GLOBAL", globalVars.Companion.userID)
-                    Log.d("test", it.childrenCount.toString())
-
-                    reference.child("user0").child("favmovie").setValue("changed")
-                    Toast.makeText(activity, "Profile saved", Toast.LENGTH_SHORT).show()
-
-                    // Test with new database entry
-                    reference.child("user1").child("favmovie").setValue("no way home")
+//                    reference.child(globalVars.Companion.userID).child("username").setValue("")
+//                    reference.child(globalVars.Companion.userID).child("favmovie").setValue("spiderman 3")
+//                    reference.child(globalVars.Companion.userID).child("genres").setValue("")
+                    Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT).show()
 
                 } else {
                     Toast.makeText(activity, "Fail", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
 
-
+        // Settings button
+        binding.settings.setOnClickListener {
+            Toast.makeText(activity, "Settings", Toast.LENGTH_SHORT).show()
+//            MainActivity.replaceFragment(SearchFragment())
+            (activity as MainActivity).replaceFragment(EditProfileFragment())
         }
 
         return binding.root

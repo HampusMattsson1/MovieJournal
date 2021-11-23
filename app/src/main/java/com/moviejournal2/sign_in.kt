@@ -56,8 +56,7 @@ class sign_in : AppCompatActivity() {
                                 ).show()
 
                                 // Set global variable
-                                globalVars.Companion.userID = email
-//                                Log.d("test", globalVars.Companion.userID)
+                                globalVars.Companion.userID = FirebaseAuth.getInstance().currentUser!!.uid
 
                                 val intent = Intent(this@sign_in, MainActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

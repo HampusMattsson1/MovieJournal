@@ -12,11 +12,15 @@ import com.google.android.material.textfield.*
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-
-
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class sign_up : AppCompatActivity() {
+
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
@@ -63,6 +67,18 @@ class sign_up : AppCompatActivity() {
                                 "You are registered successfully.",
                                 Toast.LENGTH_SHORT
                             ).show()
+
+                            // Add entries to database & set global variable
+                            globalVars.Companion.userID = firebaseUser.uid
+                            database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+                            reference = database.getReference("users")
+                            reference.get().addOnSuccessListener {
+                                if (it.exists()) {
+                                    reference.child(firebaseUser.uid).child("username").setValue("")
+                                    reference.child(firebaseUser.uid).child("favmovie").setValue("")
+                                    reference.child(firebaseUser.uid).child("genres").setValue("")
+                                }
+                            }
 
                             /* The new user will be automatically signed-in so we sign him out
                             and send him to main screen with user id and email that user have used for
