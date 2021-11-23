@@ -1,5 +1,6 @@
 package com.moviejournal2.fragments
 
+import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,13 +10,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.databinding.DataBinderMapper
+import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.moviejournal2.MainActivity
 import com.moviejournal2.R
+import com.moviejournal2.databinding.ActivityMainBinding.inflate
 import com.moviejournal2.databinding.FragmentProfileBinding
+import com.moviejournal2.globalVars
 import com.moviejournal2.sign_in
 import androidx.databinding.DataBindingUtil.setContentView as setContentView1
 
@@ -54,25 +60,41 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val v = inflater.inflate(R.layout.fragment_profile, container, false)
+//        val v = inflater.inflate(R.layout.fragment_profile, container, false)
 
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
-//        binding = FragmentProfileBinding.inflate(layoutInflater)
-        binding = DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_profile)
+        binding = FragmentProfileBinding.inflate(layoutInflater)
+//        binding = DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_profile)
 
+        reference.child("user0").get().addOnSuccessListener {
+            val m = it.child("favmovie").value
+            binding.favMovie.text = m.toString().toEditable()
+            binding.chip.text = m.toString()
+
+            if (it.exists()) {
+                val m = it.child("favmovie").value
+                binding.favMovie.text = m.toString().toEditable()
+                binding.chip.text = m.toString()
+
+            }
+        }
+
+        // Save button
         binding.save.setOnClickListener {
-
             reference.get().addOnSuccessListener {
 
-                Toast.makeText(activity, "Profile saved", Toast.LENGTH_SHORT).show()
-
                 if (it.exists()) {
-                    val m = it.child("favmovie").value
-                    Log.d("test", "test")
-                    binding.favMovie.text = m.toString().toEditable()
-                    binding.chip.text = m.toString()
+                    // Try to log how many users there are
+                    Log.d("test", "testsave")
+                    Log.d("GLOBAL", globalVars.Companion.userID)
+                    Log.d("test", it.childrenCount.toString())
 
+                    reference.child("user0").child("favmovie").setValue("changed")
+                    Toast.makeText(activity, "Profile saved", Toast.LENGTH_SHORT).show()
+
+                    // Test with new database entry
+                    reference.child("user1").child("favmovie").setValue("no way home")
 
                 } else {
                     Toast.makeText(activity, "Fail", Toast.LENGTH_SHORT).show()
@@ -82,29 +104,7 @@ class ProfileFragment : Fragment() {
 
         }
 
-//        var button = Button(activity)
-//        button = v.findViewById<Button>(R.id.save)
-//        button.setOnClickListener {
-////            Toast.makeText(activity,"Profile saved", Toast.LENGTH_SHORT).show()
-//
-//            reference.child("test").get().addOnSuccessListener {
-//
-//                if (it.exists()) {
-//                    val m = it.child("favMovie").value
-//                    if (m != null) {
-//                        binding.test.text = m.toString()
-//                    }
-//
-//
-//                } else {
-//                    Toast.makeText(activity,"Fail", Toast.LENGTH_SHORT).show()
-//                }
-//
-//
-//            }
-//        }
-
-        return v
+        return binding.root
     }
 
     companion object {

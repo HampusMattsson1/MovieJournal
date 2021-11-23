@@ -1,6 +1,7 @@
 package com.moviejournal2
 
 import MoviesAdapter
+import android.app.Application
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -24,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private val searchFragment = SearchFragment()
     private val profileFragment = ProfileFragment()
 
-
+    var userID = "none"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,5 +81,12 @@ class MainActivity : AppCompatActivity() {
             transaction.replace(R.id.fragment_container, fragment)
             transaction.commit()
         }
+    }
+}
+
+
+class globalVars : Application() {
+    companion object {
+        var userID = ""
     }
 }
