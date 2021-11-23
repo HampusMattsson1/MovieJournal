@@ -54,12 +54,16 @@ class MainActivity : AppCompatActivity() {
         mtv_user_id.text = "User ID :: $userId"
         mtv_email_id.text = "Email ID :: $emailId"
         */
+
+        //Logout button
+        /*
         val mbtn_logout = findViewById<Button>(R.id.btn_logout)
         mbtn_logout.setOnClickListener{
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(this@MainActivity, sign_up::class.java))
             finish()
         }
+        */
     }
 
     private fun onPopularMoviesFetched(movies: List<Movie>){
