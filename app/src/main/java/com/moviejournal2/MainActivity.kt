@@ -25,8 +25,6 @@ class MainActivity : AppCompatActivity() {
     private val searchFragment = SearchFragment()
     private val profileFragment = ProfileFragment()
 
-    var userID = "none"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

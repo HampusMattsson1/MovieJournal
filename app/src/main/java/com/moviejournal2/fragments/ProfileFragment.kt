@@ -9,11 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.core.view.marginStart
 import androidx.databinding.DataBinderMapper
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.google.android.material.chip.Chip
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
@@ -59,47 +63,39 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-//        val v = inflater.inflate(R.layout.fragment_profile, container, false)
-
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
         binding = FragmentProfileBinding.inflate(layoutInflater)
-//        binding = DataBindingUtil.setContentView(requireActivity(), R.layout.fragment_profile)
 
-        reference.child("user0").get().addOnSuccessListener {
-            val m = it.child("favmovie").value
-            binding.favMovie.text = m.toString().toEditable()
-            binding.chip.text = m.toString()
-
+        // Get database data
+        reference.child(globalVars.Companion.userID).get().addOnSuccessListener {
             if (it.exists()) {
-                val m = it.child("favmovie").value
-                binding.favMovie.text = m.toString().toEditable()
-                binding.chip.text = m.toString()
+                binding.user.text = it.child("username").value.toString()
+                binding.favmovie.text = it.child("favmovie").value.toString().toEditable()
 
-            }
-        }
+                // Chips
+                reference.child(globalVars.Companion.userID).child("genres").get().addOnSuccessListener { it2: DataSnapshot ->
+                    if (it2.exists()) {
+                        val size = it2.childrenCount.toInt()
+                        var counter = 0
+                        var view: LinearLayout = binding.chips
 
-        // Save button
-        binding.save.setOnClickListener {
-            reference.get().addOnSuccessListener {
+                        while (counter < size) {
+                            var chip = Chip(getActivity())
+                            chip.setCheckable(false)
+                            chip.setText(it2.child(counter.toString()).value.toString())
+                            view.addView(chip)
 
-                if (it.exists()) {
-//                    reference.child(globalVars.Companion.userID).child("username").setValue("")
-//                    reference.child(globalVars.Companion.userID).child("favmovie").setValue("spiderman 3")
-//                    reference.child(globalVars.Companion.userID).child("genres").setValue("")
-                    Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT).show()
-
-                } else {
-                    Toast.makeText(activity, "Fail", Toast.LENGTH_SHORT).show()
+                            counter += 1
+                        }
+                    }
                 }
+
             }
         }
 
         // Settings button
         binding.settings.setOnClickListener {
-            Toast.makeText(activity, "Settings", Toast.LENGTH_SHORT).show()
-//            MainActivity.replaceFragment(SearchFragment())
             (activity as MainActivity).replaceFragment(EditProfileFragment())
         }
 
