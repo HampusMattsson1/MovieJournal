@@ -72,9 +72,11 @@ class MainActivity : AppCompatActivity() {
         Log.d("MoviesFragment", "Movies: $movies")
     }
 
+    /*
     private fun onError(){
         Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
+    */
 
     fun replaceFragment(fragment: Fragment){
         if(fragment !=null) {
