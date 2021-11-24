@@ -1,11 +1,19 @@
 package com.moviejournal2.fragments
 
+import MoviesAdapter
+import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.moviejournal2.R
+import android.widget.Button
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
+import com.moviejournal2.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +30,54 @@ class SearchFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    //Results for requested movie
+    private lateinit var requestedMovie: RecyclerView
+    private lateinit var requestedMovieAdapter: MoviesAdapter
+    private lateinit var requestedMovieLayoutManager: LinearLayoutManager
+
+    private lateinit var requestedMovieName: String
+
+    private var requestedMoviePage = 1
+
+    private fun getRequestedMovie(){
+        MoviesRepository.getRequestedMovie(
+            requestedMoviePage,
+            requestedMovieName,
+            ::onRequestedMovieFetched,
+            ::onError
+        )
+    }
+
+    private fun attachRequestedMovieOnScrollListener(){
+        requestedMovie.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int){
+                //total nbr of movies inside of popularMoviesAdapter
+                val totalItemCount = requestedMovieLayoutManager.itemCount
+                //current nb of child views attached to recyclerview
+                val visibleItemCount = requestedMovieLayoutManager.childCount
+                //position of the first visible item in list
+                val firstVisibleItem = requestedMovieLayoutManager.findFirstVisibleItemPosition()
+
+                //if the user has scrolled past halfway + 1 buffered value of visibleItemCount
+                if(firstVisibleItem + visibleItemCount >= totalItemCount/2){
+                    //scroll listener disabled
+                    requestedMovie.removeOnScrollListener(this)
+                    requestedMoviePage++
+                    getRequestedMovie()
+                }
+            }
+        })
+    }
+
+    private fun onRequestedMovieFetched(movies: List<Movie>){
+        requestedMovieAdapter.appendMovies(movies)
+        attachRequestedMovieOnScrollListener()
+    }
+
+    private fun onError(){
+        Toast.makeText(requireActivity(), getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -30,12 +86,55 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun showMovieDetails(movie: Movie){
+        val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
+        intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
+        intent.putExtra(MOVIE_POSTER, movie.posterPath)
+        intent.putExtra(MOVIE_TITLE, movie.title)
+        intent.putExtra(MOVIE_RATING, movie.rating)
+        intent.putExtra(MOVIE_RELEASE_DATE, movie.releaseDate)
+        intent.putExtra(MOVIE_OVERVIEW, movie.overview)
+        startActivity(intent)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_search, container, false)
+
+
+        val msearch = rootView.findViewById<TextInputEditText>(R.id.textEditSearch)
+        val searchButton = rootView.findViewById<Button>(R.id.btn_search)
+        if (searchButton != null && msearch != null){
+            searchButton.setOnClickListener{
+                when{
+                    TextUtils.isEmpty(msearch.text.toString().trim {it <= ' '}) -> {
+                        Toast.makeText(
+                            requireActivity(),
+                            "Please enter a movie name",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                requestedMovie = rootView.findViewById<RecyclerView>(R.id.search_results)
+                requestedMovieLayoutManager = LinearLayoutManager(
+                    requireActivity(),
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+                )
+                requestedMovie.layoutManager = requestedMovieLayoutManager
+                requestedMovieAdapter = MoviesAdapter(mutableListOf()){
+                        movie -> showMovieDetails(movie)
+                }
+                requestedMovie.adapter = requestedMovieAdapter
+                requestedMovieName = msearch.text.toString().trim{it <= ' '}
+                getRequestedMovie()
+            }
+        }
+
+        return rootView
     }
 
     companion object {

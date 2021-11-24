@@ -27,6 +27,14 @@ interface Api {
         @Query("api_key") apiKey: String = "fb2a92edb783f7e99d17bc938877aacb",
         @Query("page") page: Int
     ): Call<GetMoviesResponse>
+
+    //Requested movie (search) endpoint
+    @GET("search/movie")
+    fun getRequestedMovie(
+        @Query("api_key") apiKey: String = "fb2a92edb783f7e99d17bc938877aacb",
+        @Query("query") name: String,
+        @Query("page") page: Int
+    ): Call<GetMoviesResponse>
 }
 
 
