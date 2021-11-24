@@ -77,7 +77,7 @@ class EditProfileFragment : Fragment() {
                         Toast.makeText(activity, "Genres found", Toast.LENGTH_SHORT).show()
                         size = it2.childrenCount.toInt()
                         counter = 0
-                        var view: LinearLayout = binding.chips
+                        var view: ChipGroup = binding.chipGroup
 
                         while (counter < size) {
                             var chip = Chip(getActivity())
@@ -105,13 +105,7 @@ class EditProfileFragment : Fragment() {
                     reference.child(globalVars.Companion.userID).child("genres").setValue("")
                     var counter = 0
                     var entryCounter = 0
-//                    Log.d("test", "asd")
-//                    Log.d("size", size.toString())
-//                    Log.d("counter", counter.toString())
                     while (counter < size) {
-//                        Log.d("test", chips[counter].checkedIcon.toString())
-//                        Log.d("test", chips[counter].text.toString())
-//                        Log.d("test", chips[counter].isChecked.toString())
                         if (chips[counter].isChecked) {
 //                            reference.child(globalVars.Companion.userID).child("genres").child(entryCounter.toString()).setValue(counter.toString())
                             reference.child(globalVars.Companion.userID).child("genres").child(entryCounter.toString()).setValue(chips[counter].text)

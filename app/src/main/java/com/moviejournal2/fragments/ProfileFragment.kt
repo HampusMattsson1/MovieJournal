@@ -1,22 +1,19 @@
 package com.moviejournal2.fragments
 
-import android.app.Application
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.core.view.marginStart
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBinderMapper
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -78,7 +75,7 @@ class ProfileFragment : Fragment() {
                     if (it2.exists()) {
                         val size = it2.childrenCount.toInt()
                         var counter = 0
-                        var view: LinearLayout = binding.chips
+                        var view: ChipGroup = binding.chipGroup
 
                         while (counter < size) {
                             var chip = Chip(getActivity())

@@ -118,6 +118,15 @@
                 android:layout_marginEnd="25dp"
                 android:id="@+id/chips">
 
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+
+                </com.google.android.material.chip.ChipGroup>
+
             </LinearLayout>
 
         </LinearLayout>
