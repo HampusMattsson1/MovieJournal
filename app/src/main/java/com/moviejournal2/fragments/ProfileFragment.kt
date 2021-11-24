@@ -73,16 +73,17 @@ class ProfileFragment : Fragment() {
                 // Chips
                 reference.child(globalVars.Companion.userID).child("genres").get().addOnSuccessListener { it2: DataSnapshot ->
                     if (it2.exists()) {
-                        val size = it2.childrenCount.toInt()
+//                        val size = it2.childrenCount.toInt()
                         var counter = 0
                         var view: ChipGroup = binding.chipGroup
 
-                        while (counter < size) {
-                            var chip = Chip(getActivity())
-                            chip.setCheckable(false)
-                            chip.setText(it2.child(counter.toString()).value.toString())
-                            view.addView(chip)
-
+                        while (counter < 20) {
+                            if (it2.child(counter.toString()).value != null) {
+                                var chip = Chip(getActivity())
+                                chip.setCheckable(false)
+                                chip.setText(it2.child(counter.toString()).value.toString())
+                                view.addView(chip)
+                            }
                             counter += 1
                         }
                     }

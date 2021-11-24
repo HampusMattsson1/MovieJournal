@@ -59,7 +59,7 @@ class EditProfileFragment : Fragment() {
         reference = database.getReference("users")
         binding = FragmentEditProfileBinding.inflate(layoutInflater)
 
-        // Chip array
+        // Chip array & variables
         var size = 0
         var counter = 0
         var chips = List(size) { Chip(getActivity()) }.toMutableList()
@@ -73,7 +73,7 @@ class EditProfileFragment : Fragment() {
 //                binding.chip.text = it.child("genres").value.toString()
 
                 database.getReference("genres").get().addOnSuccessListener { it2: DataSnapshot ->
-                    if (it2.exists()) {
+                    if (it2.exists() && it.child("genres").exists()) {
                         Toast.makeText(activity, "Genres found", Toast.LENGTH_SHORT).show()
                         size = it2.childrenCount.toInt()
                         counter = 0
@@ -82,6 +82,12 @@ class EditProfileFragment : Fragment() {
                         while (counter < size) {
                             var chip = Chip(getActivity())
                             chip.setCheckable(true)
+
+                            val s1 = it.child("genres").child(counter.toString()).value.toString()
+                            val s2 = it2.child(counter.toString()).value.toString()
+                            if (s1 == s2) {
+                                chip.setChecked(true)
+                            }
                             chip.setText(it2.child((counter.toString())).value.toString())
                             view.addView(chip)
 
@@ -107,11 +113,9 @@ class EditProfileFragment : Fragment() {
                     var entryCounter = 0
                     while (counter < size) {
                         if (chips[counter].isChecked) {
-//                            reference.child(globalVars.Companion.userID).child("genres").child(entryCounter.toString()).setValue(counter.toString())
-                            reference.child(globalVars.Companion.userID).child("genres").child(entryCounter.toString()).setValue(chips[counter].text)
+                            reference.child(globalVars.Companion.userID).child("genres").child(counter.toString()).setValue(chips[counter].text)
                             entryCounter += 1
                         }
-
                         counter += 1
                     }
 
