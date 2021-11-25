@@ -81,7 +81,7 @@ class ProfileFragment : Fragment() {
                             if (it2.child(counter.toString()).value != null) {
                                 var chip = Chip(getActivity())
                                 chip.setCheckable(false)
-                                chip.setText(it2.child(counter.toString()).value.toString())
+                                chip.setText(it2.child(counter.toString()).child("title").value.toString())
                                 view.addView(chip)
                             }
                             counter += 1
