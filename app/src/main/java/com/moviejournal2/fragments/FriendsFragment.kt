@@ -1,11 +1,23 @@
 package com.moviejournal2.fragments
 
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.moviejournal2.R
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.moviejournal2.databinding.FragmentFriendsBinding
+import com.moviejournal2.globalVars
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,13 +42,78 @@ class FriendsFragment : Fragment() {
         }
     }
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+    private lateinit var binding: FragmentFriendsBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false)
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        reference = database.getReference("users")
+        binding = FragmentFriendsBinding.inflate(layoutInflater)
+
+        reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener {
+            if (it.exists()) {
+                var view: LinearLayout = binding.friends
+
+                // Find users by username
+                it.children.forEach { u: DataSnapshot ->
+                    var card = TextView(getActivity())
+
+                    reference.child(u.value.toString()).get().addOnSuccessListener { it2: DataSnapshot ->
+                        if (it2.exists()) {
+                            card.setText(it2.child("username").value.toString())
+                        }
+                    }
+
+                    card.layoutParams = binding.friendCard.layoutParams
+                    view.addView(card)
+                }
+
+
+//                var counter = 0
+//                while (counter < 3) {
+////                    var card = TextView(getActivity())
+//                    var card = TextView(getActivity())
+//                    var temp = "test" + counter.toString()
+//                    card.setText(temp)
+//
+//                    card.layoutParams = binding.friendCard.layoutParams
+//                    view.addView(card)
+//
+//                    counter += 1
+//                }
+            }
+        }
+
+
+        // Search button
+        binding.searchButton.setOnClickListener {
+            Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
+
+            reference.get().addOnSuccessListener {
+                if (it.exists()) {
+                    var view: LinearLayout = binding.friends
+
+                    // Loop through all users
+                    it.children.forEach { u: DataSnapshot ->
+                        var temp = TextView(getActivity())
+                        temp.setText(u.child("username").value.toString())
+
+                        temp.layoutParams = binding.friendCard.layoutParams
+                        view.addView(temp)
+                    }
+                }
+            }
+        }
+
+
+
+        return binding.root
     }
+
 
     companion object {
         /**

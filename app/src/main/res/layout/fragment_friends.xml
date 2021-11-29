@@ -1,33 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.FriendsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
+    <data>
+        <import type="android.view.View"/>
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:text="Friends"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:textColor="#FF6200EE"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </com.google.android.material.navigation.NavigationView>
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".fragments.FriendsFragment">
+
+            <!-- TODO: Update blank fragment layout -->
+            <com.google.android.material.navigation.NavigationView
+                android:id="@+id/navigationView"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:text="Friends"
+                    android:textStyle="bold"
+                    android:textSize="20dp"
+                    android:textColor="#FF6200EE"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </com.google.android.material.navigation.NavigationView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search people"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="25dp" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="25dp"
+                android:layout_marginLeft="25dp"
+                android:layout_gravity="center_horizontal"
+                android:hint="Username"
+                android:padding="20dp"
+                android:id="@+id/userSearch"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/searchButton"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Your friends"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:text="temp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:id="@+id/friendCard"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="25dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/friends" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+</layout>
