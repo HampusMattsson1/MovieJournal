@@ -12,9 +12,11 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.moviejournal2.R
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.globalVars
 import java.util.*
@@ -91,27 +93,74 @@ class FriendsFragment : Fragment() {
 
         // Search button
         binding.searchButton.setOnClickListener {
-            Toast.makeText(activity, "Search", Toast.LENGTH_SHORT).show()
 
+            var results = arrayOf<String>().toMutableList()
+
+            // Get database data
             reference.get().addOnSuccessListener {
                 if (it.exists()) {
                     var view: LinearLayout = binding.friends
 
                     // Loop through all users
                     it.children.forEach { u: DataSnapshot ->
-                        var temp = TextView(getActivity())
-                        temp.setText(u.child("username").value.toString())
-
-                        temp.layoutParams = binding.friendCard.layoutParams
-                        view.addView(temp)
+//                        var temp = TextView(getActivity())
+//                        temp.setText(u.child("username").value.toString())
+                        if (u.child("username").value.toString() == binding.userSearch.text.toString()) {
+                            results.add(u.child("username").value.toString())
+                        }
+//                        temp.layoutParams = binding.friendCard.layoutParams
+//                        view.addView(temp)
                     }
+
+
+                    // Dialog popup
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Search results")
+                        .setSingleChoiceItems(results.toTypedArray(), -1) { dialog, which ->
+                            // Respond to item chosen
+                            Toast.makeText(activity, which.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                        .setNeutralButton("Close") { dialog, which ->
+                            // Respond to neutral button press
+                        }
+                        .setPositiveButton("Add friend") { dialog, which ->
+                            // Respond to positive button press
+                        }
+                        .show()
+                }
                 }
             }
-        }
+
+
+
+//            // Dialog popup
+//            MaterialAlertDialogBuilder(requireContext())
+//                    .setTitle("Search results")
+//    //                .setItems(results) { dialog, which ->
+//    //                    // Respond to item chosen
+//    //                    Toast.makeText(activity, "Friend request sent", Toast.LENGTH_SHORT).show()
+//    //                }
+//                .setSingleChoiceItems(results.toTypedArray(), -1) { dialog, which ->
+//                    // Respond to item chosen
+//                }
+//    //                .setNegativeButton("Close") { dialog, which ->
+//    //                    // Respond to negative button press
+//    //                }
+//                    .show()
+//            }
 
 
 
         return binding.root
+    }
+
+    fun append(arr: Array<String>, element: String): Array<String> {
+//        val array = arrayOf<String>(size + 1)
+        val array = arr
+//        val array = arrayOf<String>(arr.size + 1)
+        System.arraycopy(arr, 0, array, 0, arr.size)
+        array[arr.size] = element
+        return array
     }
 
 
