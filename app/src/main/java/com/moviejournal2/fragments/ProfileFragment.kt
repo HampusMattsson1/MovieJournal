@@ -12,12 +12,14 @@ import androidx.databinding.DataBinderMapper
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.MainActivity
 import com.moviejournal2.R
 import com.moviejournal2.databinding.ActivityMainBinding.inflate
@@ -53,6 +55,7 @@ class ProfileFragment : Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var reference: DatabaseReference
     private lateinit var binding: FragmentProfileBinding
+    private lateinit var storage: FirebaseStorage
 
     private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
@@ -63,6 +66,7 @@ class ProfileFragment : Fragment() {
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
         binding = FragmentProfileBinding.inflate(layoutInflater)
+        storage = FirebaseStorage.getInstance()
 
         // Get database data
         reference.child(globalVars.Companion.userID).get().addOnSuccessListener {
@@ -86,11 +90,21 @@ class ProfileFragment : Fragment() {
                             }
                             counter += 1
                         }
+
+                        // Get image
+                        val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
+                        val storageRef = storage.reference.child(path)
+                        storageRef.downloadUrl.addOnSuccessListener { Uri->
+                            Glide.with(this)
+                                .load(Uri.toString())
+                                .into(binding.profilePic)
+                        }
                     }
                 }
 
             }
         }
+
 
         // Settings button
         binding.settings.setOnClickListener {

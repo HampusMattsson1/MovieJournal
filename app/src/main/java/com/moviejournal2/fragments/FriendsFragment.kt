@@ -1,21 +1,17 @@
 package com.moviejournal2.fragments
 
+import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import android.widget.*
+import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.R
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.globalVars
@@ -47,6 +43,7 @@ class FriendsFragment : Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var reference: DatabaseReference
     private lateinit var binding: FragmentFriendsBinding
+    private lateinit var storage: FirebaseStorage
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,38 +52,43 @@ class FriendsFragment : Fragment() {
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
         binding = FragmentFriendsBinding.inflate(layoutInflater)
+        storage = FirebaseStorage.getInstance()
 
         reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener {
             if (it.exists()) {
-                var view: LinearLayout = binding.friends
 
                 // Find users by username
                 it.children.forEach { u: DataSnapshot ->
-                    var card = TextView(getActivity())
+                    var friendBox = LinearLayout(activity)
+                    friendBox.layoutParams = binding.friendsTemplate.layoutParams
 
+                    val img = ImageView(activity)
+                    img.layoutParams = binding.friendImg.layoutParams
+                    val path = "images/" + it.value.toString() + ".jpg"
+                    val storageRef = storage.reference.child(path)
+                    storageRef.downloadUrl.addOnSuccessListener { Uri->
+                        Glide.with(this)
+                            .load(Uri.toString())
+                            .into(img)
+                    }.addOnFailureListener { Uri->
+                        img.setImageResource(R.drawable.profile)
+                    }
+                    friendBox.addView(img)
+
+                    val username = TextView(getActivity())
+                    username.layoutParams = binding.friendName.layoutParams
+                    username.textSize = 20.toFloat()
+//
                     reference.child(u.value.toString()).get().addOnSuccessListener { it2: DataSnapshot ->
                         if (it2.exists()) {
-                            card.setText(it2.child("username").value.toString())
+                            username.setText(it2.child("username").value.toString())
                         }
                     }
 
-                    card.layoutParams = binding.friendCard.layoutParams
-                    view.addView(card)
+                    friendBox.addView(username)
+
+                    binding.friends.addView(friendBox)
                 }
-
-
-//                var counter = 0
-//                while (counter < 3) {
-////                    var card = TextView(getActivity())
-//                    var card = TextView(getActivity())
-//                    var temp = "test" + counter.toString()
-//                    card.setText(temp)
-//
-//                    card.layoutParams = binding.friendCard.layoutParams
-//                    view.addView(card)
-//
-//                    counter += 1
-//                }
             }
         }
 
@@ -99,68 +101,74 @@ class FriendsFragment : Fragment() {
             // Get database data
             reference.get().addOnSuccessListener {
                 if (it.exists()) {
-                    var view: LinearLayout = binding.friends
+                    reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener { it2 ->
+                        if (it2.exists()) {
+                            var view: LinearLayout = binding.friends
+                            val me = it.child(globalVars.Companion.userID.toString()).child("username").value.toString()
 
-                    // Loop through all users
-                    it.children.forEach { u: DataSnapshot ->
-//                        var temp = TextView(getActivity())
-//                        temp.setText(u.child("username").value.toString())
-                        if (u.child("username").value.toString() == binding.userSearch.text.toString()) {
-                            results.add(u.child("username").value.toString())
+                            // Loop through all users
+                            it.children.forEach { u: DataSnapshot ->
+                                val res = u.child("username").value.toString()
+                                if (res == binding.userSearch.text.toString() &&
+                                    res != me
+                                ) {
+                                    // Loop through user's friends
+                                    var valid = true
+                                    it2.children.forEach { f: DataSnapshot ->
+                                        if (it.child(f.value.toString()).child("username").value.toString() == binding.userSearch.text.toString()) {
+                                            valid = false
+                                        }
+                                    }
+                                    if (valid) {
+                                        results.add(u.child("username").value.toString())
+                                    }
+                                }
+                            }
+
+                            // Dialog popup initialization
+                            var d: Dialog = Dialog(requireContext())
+                            d.setTitle("Search results")
+                            d.setContentView(R.layout.friends_template)
+
+                            view = d.findViewById<LinearLayout>(R.id.dialog)
+
+                            // Loop through search results
+                            results.forEach { r: String ->
+                                val box = LinearLayout(context)
+                                val l1 = d.findViewById<LinearLayout>(R.id.dialog)
+                                box.layoutParams = l1.layoutParams
+
+                                val img = ImageView(context)
+                                val l2 = d.findViewById<ImageView>(R.id.userImg)
+                                img.layoutParams = l2.layoutParams
+                                img.setImageResource(R.drawable.profile)
+                                box.addView(img)
+
+                                val username = TextView(context)
+                                val l3 = d.findViewById<TextView>(R.id.userText)
+                                username.layoutParams = l3.layoutParams
+                                username.setText(r)
+                                box.addView(username)
+
+                                val add = ImageView(context)
+                                val l4 = d.findViewById<ImageView>(R.id.userAdd)
+                                add.layoutParams = l4.layoutParams
+                                add.setImageResource(R.drawable.add)
+                                box.addView(add)
+
+                                view.addView(box)
+                            }
+
+                            // Show dialog
+                            d.show()
+
                         }
-//                        temp.layoutParams = binding.friendCard.layoutParams
-//                        view.addView(temp)
                     }
-
-
-                    // Dialog popup
-                    MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Search results")
-                        .setSingleChoiceItems(results.toTypedArray(), -1) { dialog, which ->
-                            // Respond to item chosen
-                            Toast.makeText(activity, which.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                        .setNeutralButton("Close") { dialog, which ->
-                            // Respond to neutral button press
-                        }
-                        .setPositiveButton("Add friend") { dialog, which ->
-                            // Respond to positive button press
-                        }
-                        .show()
-                }
                 }
             }
-
-
-
-//            // Dialog popup
-//            MaterialAlertDialogBuilder(requireContext())
-//                    .setTitle("Search results")
-//    //                .setItems(results) { dialog, which ->
-//    //                    // Respond to item chosen
-//    //                    Toast.makeText(activity, "Friend request sent", Toast.LENGTH_SHORT).show()
-//    //                }
-//                .setSingleChoiceItems(results.toTypedArray(), -1) { dialog, which ->
-//                    // Respond to item chosen
-//                }
-//    //                .setNegativeButton("Close") { dialog, which ->
-//    //                    // Respond to negative button press
-//    //                }
-//                    .show()
-//            }
-
-
+        }
 
         return binding.root
-    }
-
-    fun append(arr: Array<String>, element: String): Array<String> {
-//        val array = arrayOf<String>(size + 1)
-        val array = arr
-//        val array = arrayOf<String>(arr.size + 1)
-        System.arraycopy(arr, 0, array, 0, arr.size)
-        array[arr.size] = element
-        return array
     }
 
 

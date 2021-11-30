@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             tools:context=".fragments.FriendsFragment">
 
@@ -73,15 +73,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="30dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="20dp"
-                android:text="temp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:id="@+id/friendCard"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -89,10 +80,45 @@
                 android:orientation="vertical"
                 android:layout_marginTop="25dp"
                 android:layout_gravity="center_horizontal"
-                android:id="@+id/friends" />
+                android:gravity="center_horizontal"
+                android:id="@+id/friends">
+
+            </LinearLayout>
+
+
+
+            <!-- Friends section template -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:visibility="gone"
+                android:id="@+id/friendsTemplate">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/profile"
+                    android:id="@+id/friendImg"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="25dp"
+                    android:layout_marginRight="25dp"
+                    android:id="@+id/friendName"
+                    android:text="Some Guy"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
 
     </ScrollView>
+
+
 </layout>

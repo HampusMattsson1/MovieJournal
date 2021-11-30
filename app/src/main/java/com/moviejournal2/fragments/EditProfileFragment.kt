@@ -39,7 +39,9 @@ import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import com.bumptech.glide.Glide
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import java.io.ByteArrayOutputStream
 
 
@@ -124,21 +126,33 @@ class EditProfileFragment : Fragment() {
                         // Get image
                         val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
                         val storageRef = storage.reference.child(path)
-                        val img: Long = 1024 * 1024
-                        storageRef.getBytes(img).addOnSuccessListener {
-                            Toast.makeText(activity, "image gathered", Toast.LENGTH_SHORT).show()
+                        storageRef.downloadUrl.addOnSuccessListener { Uri->
                             Glide.with(this)
-                                .load(storageRef)
+                                .load(Uri.toString())
                                 .into(binding.profilePic)
-                        }.addOnFailureListener {
-                            Toast.makeText(activity, "Unable to load image", Toast.LENGTH_SHORT).show()
                         }
+
+//                        storageRef.getBytes(img).addOnSuccessListener {
+//                            Toast.makeText(activity, "image gathered", Toast.LENGTH_SHORT).show()
+//                            Glide.with(this)
+//                                .load(storageRef)
+//                                .into(binding.profilePic)
+//                        }.addOnFailureListener {
+//                            Toast.makeText(activity, "Unable to load image", Toast.LENGTH_SHORT).show()
+//                        }
                     }
                 }
 
             }
         }
 
+
+        // Image button
+        binding.profilePic.setOnClickListener {
+            val intent = Intent("android.intent.action.GET_CONTENT")
+            intent.type = "image/*"
+            startActivityForResult(intent, CHOOSE_PHOTO)
+        }
 
 
         // Save button
@@ -180,15 +194,6 @@ class EditProfileFragment : Fragment() {
         }
 
 
-        // Image button
-        binding.profilePic.setOnClickListener {
-            val intent = Intent("android.intent.action.GET_CONTENT")
-            intent.type = "image/*"
-            startActivityForResult(intent, CHOOSE_PHOTO)
-        }
-
-
-        // Inflate the layout for this fragment
         return binding.root
     }
 
