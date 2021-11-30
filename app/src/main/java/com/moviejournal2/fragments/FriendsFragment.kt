@@ -95,7 +95,6 @@ class FriendsFragment : Fragment() {
 
         // Search button
         binding.searchButton.setOnClickListener {
-
             var results = arrayOf<String>().toMutableList()
 
             // Get database data
@@ -125,42 +124,46 @@ class FriendsFragment : Fragment() {
                                 }
                             }
 
-                            // Dialog popup initialization
-                            var d: Dialog = Dialog(requireContext())
-                            d.setTitle("Search results")
-                            d.setContentView(R.layout.friends_template)
+                            if (results.isEmpty()) {
+                                Toast.makeText(activity, "No users found", Toast.LENGTH_SHORT).show()
+                            } else {
+                                // Dialog popup initialization
+                                var d: Dialog = Dialog(requireContext())
+                                d.setTitle("Search results")
+                                d.setContentView(R.layout.friends_template)
 
-                            view = d.findViewById<LinearLayout>(R.id.dialog)
+                                view = d.findViewById<LinearLayout>(R.id.dialog)
 
-                            // Loop through search results
-                            results.forEach { r: String ->
-                                val box = LinearLayout(context)
-                                val l1 = d.findViewById<LinearLayout>(R.id.dialog)
-                                box.layoutParams = l1.layoutParams
+                                // Loop through search results
+                                results.forEach { r: String ->
+                                    val box = LinearLayout(context)
+                                    val l1 = d.findViewById<LinearLayout>(R.id.dialog)
+                                    box.layoutParams = l1.layoutParams
 
-                                val img = ImageView(context)
-                                val l2 = d.findViewById<ImageView>(R.id.userImg)
-                                img.layoutParams = l2.layoutParams
-                                img.setImageResource(R.drawable.profile)
-                                box.addView(img)
+                                    val img = ImageView(context)
+                                    val l2 = d.findViewById<ImageView>(R.id.userImg)
+                                    img.layoutParams = l2.layoutParams
+                                    img.setImageResource(R.drawable.profile)
+                                    box.addView(img)
 
-                                val username = TextView(context)
-                                val l3 = d.findViewById<TextView>(R.id.userText)
-                                username.layoutParams = l3.layoutParams
-                                username.setText(r)
-                                box.addView(username)
+                                    val username = TextView(context)
+                                    val l3 = d.findViewById<TextView>(R.id.userText)
+                                    username.layoutParams = l3.layoutParams
+                                    username.setText(r)
+                                    box.addView(username)
 
-                                val add = ImageView(context)
-                                val l4 = d.findViewById<ImageView>(R.id.userAdd)
-                                add.layoutParams = l4.layoutParams
-                                add.setImageResource(R.drawable.add)
-                                box.addView(add)
+                                    val add = ImageView(context)
+                                    val l4 = d.findViewById<ImageView>(R.id.userAdd)
+                                    add.layoutParams = l4.layoutParams
+                                    add.setImageResource(R.drawable.add)
+                                    box.addView(add)
 
-                                view.addView(box)
+                                    view.addView(box)
+                                }
+
+                                // Show dialog
+                                d.show()
                             }
-
-                            // Show dialog
-                            d.show()
 
                         }
                     }

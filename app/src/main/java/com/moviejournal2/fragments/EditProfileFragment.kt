@@ -131,15 +131,6 @@ class EditProfileFragment : Fragment() {
                                 .load(Uri.toString())
                                 .into(binding.profilePic)
                         }
-
-//                        storageRef.getBytes(img).addOnSuccessListener {
-//                            Toast.makeText(activity, "image gathered", Toast.LENGTH_SHORT).show()
-//                            Glide.with(this)
-//                                .load(storageRef)
-//                                .into(binding.profilePic)
-//                        }.addOnFailureListener {
-//                            Toast.makeText(activity, "Unable to load image", Toast.LENGTH_SHORT).show()
-//                        }
                     }
                 }
 
