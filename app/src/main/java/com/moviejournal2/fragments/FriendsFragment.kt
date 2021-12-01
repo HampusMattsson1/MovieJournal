@@ -70,7 +70,7 @@ class FriendsFragment : Fragment() {
 
                     val img = ImageView(activity)
                     img.layoutParams = binding.friendImg.layoutParams
-                    val path = "images/" + it.value.toString() + ".jpg"
+                    val path = "images/" + u.value.toString() + ".jpg"
                     val storageRef = storage.reference.child(path)
                     storageRef.downloadUrl.addOnSuccessListener { Uri->
                         Glide.with(this)
@@ -199,12 +199,19 @@ class FriendsFragment : Fragment() {
                                             val id = it.child(userid).child("requests").child(counter.toString()).value.toString()
                                             if (id == globalVars.Companion.userID) {
                                                 alreadySent = true
+                                                break
                                             }
                                             counter += 1
                                         }
 
                                         if (alreadySent == false) {
-                                            val index = it.child(userid).child("requests").childrenCount
+                                            var index = 0
+                                            while (index < it.child(userid).child("requests").childrenCount) {
+                                                if (it.child(userid).child("requests").child(index.toString()).value == null) {
+                                                    break
+                                                }
+                                                index += 1
+                                            }
                                             reference.child(userid).child("requests").child(index.toString()).setValue(globalVars.Companion.userID)
 
                                             val output = "Friend request sent to " + r
@@ -291,12 +298,50 @@ class FriendsFragment : Fragment() {
                                 val l4 = d.findViewById<ImageView>(R.id.userAccept)
                                 accept.layoutParams = l4.layoutParams
                                 accept.setImageResource(R.drawable.add)
+
+                                // Accept button listener
+                                accept.setOnClickListener { a ->
+                                    Toast.makeText(activity, "Accept", Toast.LENGTH_SHORT).show()
+
+                                    // Add friend to my friends list
+                                    var index1 = 0
+                                    val ref1 = it.child(globalVars.Companion.userID).child("friends")
+                                    while (index1 < ref1.childrenCount) {
+                                        if (ref1.child(index1.toString()).value == null) {
+                                            break
+                                        }
+                                        index1 += 1
+                                    }
+                                    ref1.child(index1.toString()).ref.setValue(req.value.toString())
+
+                                    // Add me to the other user's friends list
+                                    var index2 = 0
+                                    val ref2 = it.child(userid).child("friends")
+                                    while (index2 < ref2.childrenCount) {
+                                        if (ref2.child(index2.toString()).value == null) {
+                                            break
+                                        }
+                                        index2 += 1
+                                    }
+                                    ref2.child(index2.toString()).ref.setValue(globalVars.Companion.userID)
+
+                                    // Remove friends request
+                                    it2.ref.removeValue()
+                                }
+
                                 box.addView(accept)
 
                                 val deny = ImageView(context)
                                 val l5 = d.findViewById<ImageView>(R.id.userDeny)
                                 deny.layoutParams = l5.layoutParams
                                 deny.setImageResource(R.drawable.add)
+
+                                // Deny button listener
+                                deny.setOnClickListener { d ->
+                                    it2.ref.removeValue()
+                                    Toast.makeText(activity, "Friend required denied", Toast.LENGTH_SHORT).show()
+                                }
+
                                 box.addView(deny)
 
                                 view.addView(box)
