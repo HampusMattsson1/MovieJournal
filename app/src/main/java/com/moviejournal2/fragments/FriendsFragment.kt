@@ -1,6 +1,7 @@
 package com.moviejournal2.fragments
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +18,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
+import com.moviejournal2.EditProfile
 import com.moviejournal2.R
+import com.moviejournal2.ViewFriend
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.globalVars
 import java.util.*
@@ -97,8 +100,10 @@ class FriendsFragment : Fragment() {
                     friendBox.setPadding(35)
 
                     // Clicking on a friend
-                    friendBox.setOnClickListener {
-                        Toast.makeText(activity, "Friend clicked on", Toast.LENGTH_SHORT).show()
+                    friendBox.setOnClickListener { f ->
+                        val i = Intent(requireContext(), ViewFriend::class.java)
+                        i.putExtra("id", u.value.toString())
+                        startActivity(i)
                     }
 
                     binding.friends.addView(friendBox)

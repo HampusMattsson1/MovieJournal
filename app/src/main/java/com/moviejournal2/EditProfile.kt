@@ -32,8 +32,6 @@ class EditProfile : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_edit_profile)
-
 
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
@@ -139,10 +137,6 @@ class EditProfile : AppCompatActivity() {
                 }
             }
         }
-
-
-//        return binding.root
-
 
     }
 
