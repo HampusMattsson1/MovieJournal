@@ -2,7 +2,6 @@ package com.moviejournal2.fragments
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -18,7 +17,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
-import com.moviejournal2.EditProfile
 import com.moviejournal2.R
 import com.moviejournal2.ViewFriend
 import com.moviejournal2.databinding.FragmentFriendsBinding
@@ -123,7 +121,7 @@ class FriendsFragment : Fragment() {
                 if (it.exists()) {
                     reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener { it2 ->
                         if (it2.exists()) {
-                            var view: LinearLayout = binding.friends
+//                            var view: LinearLayout = binding.friends
                             val me = it.child(globalVars.Companion.userID.toString()).child("username").value.toString()
 
                             // Loop through all users
@@ -152,9 +150,9 @@ class FriendsFragment : Fragment() {
                                 // Dialog popup initialization
                                 var d: Dialog = Dialog(requireContext())
                                 d.setTitle("Search results")
-                                d.setContentView(R.layout.friends_template)
+                                d.setContentView(R.layout.template_search)
 
-                                view = d.findViewById<LinearLayout>(R.id.dialog)
+                                var view = d.findViewById<LinearLayout>(R.id.dialog)
                                 var counter = 0
 
                                 // Loop through search results
@@ -237,6 +235,93 @@ class FriendsFragment : Fragment() {
                 }
             }
         }
+
+
+        // Friend requests button
+        binding.bell.setOnClickListener {
+            var results = arrayOf<String>().toMutableList()
+            var resultsRef = arrayOf<String>().toMutableList()
+
+            // Get database data
+            reference.get().addOnSuccessListener {
+                if (it.exists()) {
+                    reference.child(globalVars.Companion.userID).child("requests").get().addOnSuccessListener { it2 ->
+
+                        if (it2.childrenCount > 0) {
+
+                            // Dialog popup initialization
+                            var d: Dialog = Dialog(requireContext())
+                            d.setTitle("Friend requests")
+                            d.setContentView(R.layout.template_friend_requests)
+
+                            var view = d.findViewById<LinearLayout>(R.id.dialog)
+                            var counter = 0
+
+                            it2.children.forEach { req ->
+
+                                val box = LinearLayout(context)
+                                val l1 = d.findViewById<LinearLayout>(R.id.dialog)
+                                box.layoutParams = l1.layoutParams
+
+                                val img = ImageView(context)
+                                val l2 = d.findViewById<ImageView>(R.id.userImg)
+                                img.layoutParams = l2.layoutParams
+                                img.setImageResource(R.drawable.profile)
+
+                                val userid = it2.child(counter.toString()).value.toString()
+
+                                val path = "images/" + userid + ".jpg"
+                                val storageRef = storage.reference.child(path)
+                                storageRef.downloadUrl.addOnSuccessListener { Uri->
+                                    Glide.with(this)
+                                        .load(Uri.toString())
+                                        .into(img)
+                                }.addOnFailureListener { Uri->
+                                    img.setImageResource(R.drawable.profile)
+                                }
+                                box.addView(img)
+
+                                val username = TextView(context)
+                                val l3 = d.findViewById<TextView>(R.id.userText)
+                                username.layoutParams = l3.layoutParams
+                                username.setText(it.child(userid).child("username").value.toString())
+                                box.addView(username)
+
+                                val accept = ImageView(context)
+                                val l4 = d.findViewById<ImageView>(R.id.userAccept)
+                                accept.layoutParams = l4.layoutParams
+                                accept.setImageResource(R.drawable.add)
+                                box.addView(accept)
+
+                                val deny = ImageView(context)
+                                val l5 = d.findViewById<ImageView>(R.id.userDeny)
+                                deny.layoutParams = l5.layoutParams
+                                deny.setImageResource(R.drawable.add)
+                                box.addView(deny)
+
+                                view.addView(box)
+                                counter += 1
+                            }
+
+
+                            // Close button onclick
+                            d.findViewById<TextView>(R.id.closeDialog).setOnClickListener { c ->
+                                d.dismiss()
+                            }
+
+                            // Show dialog
+                            d.show()
+
+                        } else {
+                            Toast.makeText(activity, "No incoming friend requests", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+
+
 
         return binding.root
     }
