@@ -1,5 +1,6 @@
 package com.moviejournal2.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.util.TypedValue
@@ -20,12 +21,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.moviejournal2.MainActivity
-import com.moviejournal2.R
+import com.moviejournal2.*
 import com.moviejournal2.databinding.ActivityMainBinding.inflate
 import com.moviejournal2.databinding.FragmentProfileBinding
-import com.moviejournal2.globalVars
-import com.moviejournal2.sign_in
 import androidx.databinding.DataBindingUtil.setContentView as setContentView1
 
 // TODO: Rename parameter arguments, choose names that match
@@ -108,7 +106,9 @@ class ProfileFragment : Fragment() {
 
         // Settings button
         binding.settings.setOnClickListener {
-            (activity as MainActivity).replaceFragment(EditProfileFragment())
+//            (activity as MainActivity).replaceFragment(EditProfileFragment())
+            val i = Intent(requireContext(), EditProfile::class.java)
+            startActivity(i)
         }
 
         return binding.root

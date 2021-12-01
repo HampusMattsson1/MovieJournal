@@ -80,8 +80,7 @@ class EditProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        database =
-            FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users")
         binding = FragmentEditProfileBinding.inflate(layoutInflater)
         storage = FirebaseStorage.getInstance()

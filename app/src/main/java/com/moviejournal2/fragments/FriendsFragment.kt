@@ -96,6 +96,11 @@ class FriendsFragment : Fragment() {
                     friendBox.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
                     friendBox.setPadding(35)
 
+                    // Clicking on a friend
+                    friendBox.setOnClickListener {
+                        Toast.makeText(activity, "Friend clicked on", Toast.LENGTH_SHORT).show()
+                    }
+
                     binding.friends.addView(friendBox)
                 }
             }
