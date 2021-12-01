@@ -1,12 +1,17 @@
 package com.moviejournal2.fragments
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import com.bumptech.glide.Glide
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
@@ -87,6 +92,10 @@ class FriendsFragment : Fragment() {
 
                     friendBox.addView(username)
 
+                    friendBox.gravity = Gravity.CENTER_HORIZONTAL
+                    friendBox.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                    friendBox.setPadding(35)
+
                     binding.friends.addView(friendBox)
                 }
             }
@@ -96,6 +105,7 @@ class FriendsFragment : Fragment() {
         // Search button
         binding.searchButton.setOnClickListener {
             var results = arrayOf<String>().toMutableList()
+            var resultsRef = arrayOf<String>().toMutableList()
 
             // Get database data
             reference.get().addOnSuccessListener {
@@ -120,6 +130,7 @@ class FriendsFragment : Fragment() {
                                     }
                                     if (valid) {
                                         results.add(u.child("username").value.toString())
+                                        resultsRef.add(u.key.toString())
                                     }
                                 }
                             }
@@ -133,6 +144,7 @@ class FriendsFragment : Fragment() {
                                 d.setContentView(R.layout.friends_template)
 
                                 view = d.findViewById<LinearLayout>(R.id.dialog)
+                                var counter = 0
 
                                 // Loop through search results
                                 results.forEach { r: String ->
@@ -143,7 +155,16 @@ class FriendsFragment : Fragment() {
                                     val img = ImageView(context)
                                     val l2 = d.findViewById<ImageView>(R.id.userImg)
                                     img.layoutParams = l2.layoutParams
-                                    img.setImageResource(R.drawable.profile)
+                                    Log.d("test", resultsRef.toString())
+                                    val path = "images/" + resultsRef[counter] + ".jpg"
+                                    val storageRef = storage.reference.child(path)
+                                    storageRef.downloadUrl.addOnSuccessListener { Uri->
+                                        Glide.with(this)
+                                            .load(Uri.toString())
+                                            .into(img)
+                                    }.addOnFailureListener { Uri->
+                                        img.setImageResource(R.drawable.profile)
+                                    }
                                     box.addView(img)
 
                                     val username = TextView(context)
@@ -156,9 +177,21 @@ class FriendsFragment : Fragment() {
                                     val l4 = d.findViewById<ImageView>(R.id.userAdd)
                                     add.layoutParams = l4.layoutParams
                                     add.setImageResource(R.drawable.add)
+                                    // Add button listener
+                                    add.setOnClickListener { a ->
+                                        val output = "Friend request sent to " + r
+                                        Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
+                                    }
+
                                     box.addView(add)
 
                                     view.addView(box)
+                                    counter += 1
+                                }
+
+                                // Close button onclick
+                                d.findViewById<TextView>(R.id.closeDialog).setOnClickListener { c ->
+                                    d.dismiss()
                                 }
 
                                 // Show dialog
