@@ -95,6 +95,7 @@ class FriendsFragment : Fragment() {
 
                     friendBox.addView(username)
 
+                    // FriendBox layout params
                     friendBox.gravity = Gravity.CENTER_HORIZONTAL
                     friendBox.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
                     friendBox.setPadding(35)
@@ -165,8 +166,10 @@ class FriendsFragment : Fragment() {
                                     val img = ImageView(context)
                                     val l2 = d.findViewById<ImageView>(R.id.userImg)
                                     img.layoutParams = l2.layoutParams
-                                    Log.d("test", resultsRef.toString())
-                                    val path = "images/" + resultsRef[counter] + ".jpg"
+
+                                    val userid = resultsRef[counter]
+
+                                    val path = "images/" + userid + ".jpg"
                                     val storageRef = storage.reference.child(path)
                                     storageRef.downloadUrl.addOnSuccessListener { Uri->
                                         Glide.with(this)
@@ -187,10 +190,31 @@ class FriendsFragment : Fragment() {
                                     val l4 = d.findViewById<ImageView>(R.id.userAdd)
                                     add.layoutParams = l4.layoutParams
                                     add.setImageResource(R.drawable.add)
+
                                     // Add button listener
                                     add.setOnClickListener { a ->
-                                        val output = "Friend request sent to " + r
-                                        Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
+                                        // Check if friend request is already sent
+                                        var alreadySent = false
+
+                                        var counter = 0
+                                        while (counter < it.child(userid).child("requests").childrenCount) {
+                                            val id = it.child(userid).child("requests").child(counter.toString()).value.toString()
+                                            if (id == globalVars.Companion.userID) {
+                                                alreadySent = true
+                                            }
+                                            counter += 1
+                                        }
+
+                                        if (alreadySent == false) {
+                                            val index = it.child(userid).child("requests").childrenCount
+                                            reference.child(userid).child("requests").child(index.toString()).setValue(globalVars.Companion.userID)
+
+                                            val output = "Friend request sent to " + r
+                                            Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            val output = "Friend request already sent to  " + r
+                                            Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
+                                        }
                                     }
 
                                     box.addView(add)
