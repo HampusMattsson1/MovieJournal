@@ -118,10 +118,17 @@
                     android:layout_gravity="center_horizontal">
 
 
-
                 </com.google.android.material.chip.ChipGroup>
 
             </LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/unfriend"
+                android:text="Unfriend"/>
 
         </LinearLayout>
 
