@@ -22,6 +22,7 @@ import com.moviejournal2.R
 import com.moviejournal2.ViewFriend
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.globalVars
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -69,7 +70,8 @@ class FriendsFragment : Fragment() {
                     var friendBox = LinearLayout(activity)
                     friendBox.layoutParams = binding.friendsTemplate.layoutParams
 
-                    val img = ImageView(activity)
+//                    val img = ImageView(activity)
+                    val img = CircleImageView(activity)
                     img.layoutParams = binding.friendImg.layoutParams
                     val path = "images/" + u.value.toString() + ".jpg"
                     val storageRef = storage.reference.child(path)
@@ -84,8 +86,8 @@ class FriendsFragment : Fragment() {
 
                     val username = TextView(getActivity())
                     username.layoutParams = binding.friendName.layoutParams
-                    username.textSize = 20.toFloat()
-//
+                    username.textSize = 25.toFloat()
+
                     reference.child(u.value.toString()).get().addOnSuccessListener { it2: DataSnapshot ->
                         if (it2.exists()) {
                             username.setText(it2.child("username").value.toString())
@@ -108,6 +110,13 @@ class FriendsFragment : Fragment() {
 
                     binding.friends.addView(friendBox)
                 }
+
+                // Check incoming friend requests
+                reference.child(globalVars.Companion.userID).child("requests").get().addOnSuccessListener { it2 ->
+                    if (it2.exists() && it2.childrenCount.toInt() > 0) {
+                        binding.bell.setImageResource(R.drawable.bell2)
+                    }
+                }
             }
         }
 
@@ -116,6 +125,7 @@ class FriendsFragment : Fragment() {
         binding.searchButton.setOnClickListener {
             var results = arrayOf<String>().toMutableList()
             var resultsRef = arrayOf<String>().toMutableList()
+            var resultsIsfriend = arrayOf<Int>().toMutableList()
 
             // Get database data
             reference.get().addOnSuccessListener {
@@ -132,15 +142,18 @@ class FriendsFragment : Fragment() {
                                     res != me
                                 ) {
                                     // Loop through user's friends
-                                    var valid = true
+                                    var friend = false
                                     it2.children.forEach { f: DataSnapshot ->
                                         if (it.child(f.value.toString()).child("username").value.toString() == binding.userSearch.text.toString()) {
-                                            valid = false
+                                            friend = true
                                         }
                                     }
-                                    if (valid) {
-                                        results.add(u.child("username").value.toString())
-                                        resultsRef.add(u.key.toString())
+                                    results.add(res)
+                                    resultsRef.add(u.key.toString())
+                                    if (friend) {
+                                        resultsIsfriend.add(1)
+                                    } else {
+                                        resultsIsfriend.add(0)
                                     }
                                 }
                             }
@@ -164,6 +177,8 @@ class FriendsFragment : Fragment() {
 
                                     val img = ImageView(context)
                                     val l2 = d.findViewById<ImageView>(R.id.userImg)
+//                                    val img = CircleImageView(context)
+//                                    val l2 = d.findViewById<CircleImageView>(R.id.userImg)
                                     img.layoutParams = l2.layoutParams
 
                                     val userid = resultsRef[counter]
@@ -188,7 +203,12 @@ class FriendsFragment : Fragment() {
                                     val add = ImageView(context)
                                     val l4 = d.findViewById<ImageView>(R.id.userAdd)
                                     add.layoutParams = l4.layoutParams
-                                    add.setImageResource(R.drawable.add)
+
+                                    if (resultsIsfriend[counter] == 1) {
+                                        add.setImageResource(R.drawable.done)
+                                    } else {
+                                        add.setImageResource(R.drawable.add)
+                                    }
 
                                     // Add button listener
                                     add.setOnClickListener { a ->
@@ -370,8 +390,6 @@ class FriendsFragment : Fragment() {
                 }
             }
         }
-
-
 
 
         return binding.root

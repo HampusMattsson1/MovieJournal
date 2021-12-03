@@ -52,13 +52,22 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ImageView
+<!--            <ImageView-->
+<!--                android:id="@+id/profilePic"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="200dp"-->
+<!--                android:layout_marginTop="60dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/ic_baseline_account_box_24" />-->
+
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profilePic"
-                android:layout_width="match_parent"
+                android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="70dp"
+                android:layout_marginBottom="10dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_baseline_account_box_24" />
+                android:src="@drawable/ic_baseline_account_box_24"/>
 
             <TextView
                 android:id="@+id/user"

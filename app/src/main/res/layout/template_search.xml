@@ -14,19 +14,20 @@
         android:orientation="vertical"
         android:id="@+id/dialog">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Search results"
-                android:layout_marginBottom="10dp"/>
 
-            <ImageView
+<!--            <ImageView-->
+<!--                android:layout_width="50dp"-->
+<!--                android:layout_height="50dp"-->
+<!--                android:src="@drawable/profile"-->
+<!--                android:visibility="gone"-->
+<!--                android:id="@+id/userImg"/>-->
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userImg"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/profile"
                 android:visibility="gone"
-                android:id="@+id/userImg"/>
+                android:src="@drawable/profile"/>
 
             <TextView
                 android:layout_width="wrap_content"

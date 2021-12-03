@@ -1,9 +1,11 @@
 package com.moviejournal2
 
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -38,12 +40,27 @@ class ViewFriend : AppCompatActivity() {
         val b: Bundle? = getIntent().getExtras()
         val id = b?.getString("id")
 
+
+
         // Get database data
         if (id != null) {
             reference.child(id).get().addOnSuccessListener {
                 if (it.exists()) {
                     binding.user.text = it.child("username").value.toString()
                     binding.favmovie.text = it.child("favmovie").value.toString().toEditable()
+
+                    // Get image
+                    val path = "images/" + id + ".jpg"
+                    val storageRef = storage.reference.child(path)
+                    storageRef.downloadUrl.addOnSuccessListener { Uri->
+                        Glide.with(this)
+                            .load(Uri.toString())
+                            .into(binding.profilePic)
+                    }
+
+                    // Set view title
+                    val title = it.child("username").value.toString() + " profile"
+                    binding.title.setText(title)
 
                     // Chips
                     reference.child(id).child("genres").get().addOnSuccessListener { it2: DataSnapshot ->
@@ -62,24 +79,16 @@ class ViewFriend : AppCompatActivity() {
                                 counter += 1
                             }
 
-                            // Get image
-                            val path = "images/" + id + ".jpg"
-                            val storageRef = storage.reference.child(path)
-                            storageRef.downloadUrl.addOnSuccessListener { Uri->
-                                Glide.with(this)
-                                    .load(Uri.toString())
-                                    .into(binding.profilePic)
-                            }
-
-                            // Set view title
-                            val title = it.child("username").value.toString() + " profile"
-                            binding.title.setText(title)
                         }
                     }
-
                 }
             }
         }
+
+
+        // Unfriend button
+
+
 
     }
 }
