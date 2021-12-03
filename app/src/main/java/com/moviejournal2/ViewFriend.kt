@@ -39,8 +39,7 @@ class ViewFriend : AppCompatActivity() {
 
         val b: Bundle? = getIntent().getExtras()
         val id = b?.getString("id")
-
-
+        val name = b?.getString("name")
 
         // Get database data
         if (id != null) {
@@ -78,7 +77,6 @@ class ViewFriend : AppCompatActivity() {
                                 }
                                 counter += 1
                             }
-
                         }
                     }
                 }
@@ -87,8 +85,33 @@ class ViewFriend : AppCompatActivity() {
 
 
         // Unfriend button
+        binding.unfriend.setOnClickListener { r ->
+            if (id != null && name != null) {
+                reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener {
+                    if (it.exists()) {
+                        reference.child(id).child("friends").get().addOnSuccessListener { it2 ->
+                            if (it2.exists()) {
+                                // Remove from user's friends list
+                                it.children.forEach { c ->
+                                    if (c.value.toString() == id) {
+                                        c.ref.removeValue()
+                                    }
+                                }
 
+                                // Remove from friend's friends list
+                                it2.children.forEach { c ->
+                                    if (c.value.toString() == globalVars.Companion.userID) {
+                                        c.ref.removeValue()
+                                    }
+                                }
 
-
+                                val output = "Unfriended " + name
+                                Toast.makeText(this, output, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -84,6 +84,8 @@ class FriendsFragment : Fragment() {
                     }
                     friendBox.addView(img)
 
+                    var uname = ""
+
                     val username = TextView(getActivity())
                     username.layoutParams = binding.friendName.layoutParams
                     username.textSize = 25.toFloat()
@@ -91,6 +93,7 @@ class FriendsFragment : Fragment() {
                     reference.child(u.value.toString()).get().addOnSuccessListener { it2: DataSnapshot ->
                         if (it2.exists()) {
                             username.setText(it2.child("username").value.toString())
+                            uname = it2.child("username").value.toString()
                         }
                     }
 
@@ -105,6 +108,7 @@ class FriendsFragment : Fragment() {
                     friendBox.setOnClickListener { f ->
                         val i = Intent(requireContext(), ViewFriend::class.java)
                         i.putExtra("id", u.value.toString())
+                        i.putExtra("name", uname)
                         startActivity(i)
                     }
 
