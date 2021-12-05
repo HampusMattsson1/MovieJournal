@@ -5,10 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
-import android.widget.RatingBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -57,6 +54,18 @@ class MovieInfoActivity : AppCompatActivity() {
             id = extras.getInt(MOVIE_ID, 0)
             Log.i("MovieInfoActivity", "$id")
             fillDetails(extras)
+
+            val addButton: ImageButton = findViewById(R.id.addBtn) as ImageButton
+            addButton.setOnClickListener {
+                Toast.makeText(this, "TESTING BUTTON CLICK 1", Toast.LENGTH_SHORT).show()
+                //Here try to push the id variable from line 54 to the WATCHLIST list in firebase db
+            }
+
+            val likeButton: ImageButton = findViewById(R.id.likeBtn) as ImageButton
+            addButton.setOnClickListener {
+                Toast.makeText(this, "TESTING BUTTON CLICK 2", Toast.LENGTH_SHORT).show()
+                //Here try to push the id variable from line 54 to the  LIKED list in firebase db
+            }
         }else{
             finish()
         }
