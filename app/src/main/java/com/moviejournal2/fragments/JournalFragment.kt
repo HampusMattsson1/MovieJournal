@@ -1,11 +1,20 @@
 package com.moviejournal2.fragments
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.Toast
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.R
+import com.moviejournal2.databinding.FragmentFriendsBinding
+import com.moviejournal2.databinding.FragmentJournalBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,12 +39,55 @@ class JournalFragment : Fragment() {
         }
     }
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+    private lateinit var binding: FragmentJournalBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_journal, container, false)
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        reference = database.getReference("users")
+        binding = FragmentJournalBinding.inflate(layoutInflater)
+
+        // Make calendar view
+        val calendar = CalendarView(requireContext())
+        calendar.layoutParams = binding.calendar.layoutParams
+        calendar.foregroundGravity = Gravity.CENTER_HORIZONTAL
+
+        calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val calendar2: Calendar = Calendar.getInstance()
+            calendar2.set(year, month, dayOfMonth)
+            calendar.setDate(calendar2.timeInMillis, true, true)
+        }
+
+
+        // Loop through and display calendar entries on selected date
+
+
+
+
+        // New calendar entry button
+        binding.newEntry.setOnClickListener {
+            Toast.makeText(activity, SimpleDateFormat("dd/MM/yyyy").format(calendar.date), Toast.LENGTH_SHORT).show()
+
+
+
+
+        }
+
+
+        binding.calendarView.addView(calendar)
+        return binding.root
+    }
+
+
+    // Function used to create a new journal entry
+    fun newEntry(): Int {
+
+
+        return 1
     }
 
     companion object {
