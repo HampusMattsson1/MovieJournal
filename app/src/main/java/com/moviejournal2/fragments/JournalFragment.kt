@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.R
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.databinding.FragmentJournalBinding
+import com.moviejournal2.globalVars
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,7 +65,13 @@ class JournalFragment : Fragment() {
 
 
         // Loop through and display calendar entries on selected date
+        reference.child(globalVars.Companion.userID).child("journal").child(SimpleDateFormat("dd/MM/yyyy").format(calendar.date)).get().addOnSuccessListener {
+            if (it.exists()) {
+                it.children.forEach { c ->
 
+                }
+            }
+        }
 
 
 
