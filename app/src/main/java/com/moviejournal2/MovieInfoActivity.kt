@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.MoviesRepository.getRecommendedMovies
 
 const val MOVIE_ID = "extra_movie_id"
@@ -34,12 +36,19 @@ class MovieInfoActivity : AppCompatActivity() {
     private lateinit var recommendedMoviesAdapter: MoviesAdapter
     private lateinit var recommendedMoviesLayoutManager: LinearLayoutManager
 
+    // Firebase
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+
     private var recommendedMoviesPage = 1
     private var id: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_info)
+
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        reference = database.getReference("users")
 
         backdrop = findViewById(R.id.backdrop)
         poster = findViewById(R.id.movie_poster)
@@ -57,14 +66,60 @@ class MovieInfoActivity : AppCompatActivity() {
 
             val addButton: ImageButton = findViewById(R.id.addBtn) as ImageButton
             addButton.setOnClickListener {
-                Toast.makeText(this, "TESTING BUTTON CLICK 1", Toast.LENGTH_SHORT).show()
                 //Here try to push the id variable from line 54 to the WATCHLIST list in firebase db
+                reference.child(globalVars.Companion.userID).child("watchlist").get().addOnSuccessListener { it2 ->
+                    // Check if the movie isn't already in the watchlist
+                    var exist = 0
+                    it2.children.forEach { c ->
+                        if (c.value.toString() == id.toString()) {
+                            exist = 1
+                        }
+                    }
+
+                    if (exist == 0) {
+                        var index = 0
+                        while (index < it2.childrenCount) {
+                            if (it2.child(index.toString()).value == null) {
+                                break
+                            }
+                            index += 1
+                        }
+                        it2.ref.child(index.toString()).ref.setValue(id.toString()).addOnSuccessListener { it3 ->
+                            Toast.makeText(this, "Movie added to watchlist", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "Movie already in watchlist", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             val likeButton: ImageButton = findViewById(R.id.likeBtn) as ImageButton
             addButton.setOnClickListener {
-                Toast.makeText(this, "TESTING BUTTON CLICK 2", Toast.LENGTH_SHORT).show()
                 //Here try to push the id variable from line 54 to the  LIKED list in firebase db
+                reference.child(globalVars.Companion.userID).child("likedlist").get().addOnSuccessListener { it2 ->
+                    // Check if the movie isn't already in the likedlist
+                    var exist = 0
+                    it2.children.forEach { c ->
+                        if (c.value.toString() == id.toString()) {
+                            exist = 1
+                        }
+                    }
+
+                    if (exist == 0) {
+                        var index = 0
+                        while (index < it2.childrenCount) {
+                            if (it2.child(index.toString()).value == null) {
+                                break
+                            }
+                            index += 1
+                        }
+                        it2.ref.child(index.toString()).ref.setValue(id.toString()).addOnSuccessListener { it3 ->
+                            Toast.makeText(this, "Movie added to likedlist", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "Movie already in likedlist", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         }else{
             finish()
