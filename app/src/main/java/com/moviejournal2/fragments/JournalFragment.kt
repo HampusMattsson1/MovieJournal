@@ -1,5 +1,6 @@
 package com.moviejournal2.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.Fragment
@@ -10,7 +11,9 @@ import android.widget.CalendarView
 import android.widget.Toast
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.moviejournal2.EditJournalEntry
 import com.moviejournal2.R
+import com.moviejournal2.ViewFriend
 import com.moviejournal2.databinding.FragmentFriendsBinding
 import com.moviejournal2.databinding.FragmentJournalBinding
 import com.moviejournal2.globalVars
@@ -75,13 +78,11 @@ class JournalFragment : Fragment() {
 
 
 
-        // New calendar entry button
+        // New journal entry button
         binding.newEntry.setOnClickListener {
-            Toast.makeText(activity, SimpleDateFormat("dd/MM/yyyy").format(calendar.date), Toast.LENGTH_SHORT).show()
-
-
-
-
+            val i = Intent(requireContext(), EditJournalEntry::class.java)
+            i.putExtra("date", calendar.date)
+            startActivity(i)
         }
 
 

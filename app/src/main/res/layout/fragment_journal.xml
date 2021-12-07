@@ -101,7 +101,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="New journal entry" />
+            android:text="New entry on date" />
 
     </LinearLayout>
 </layout>
