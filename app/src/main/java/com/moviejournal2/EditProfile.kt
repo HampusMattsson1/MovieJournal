@@ -2,14 +2,17 @@ package com.moviejournal2
 
 import android.app.Activity
 import android.app.PendingIntent.getActivity
+import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -27,6 +30,8 @@ class EditProfile : AppCompatActivity() {
     private lateinit var reference: DatabaseReference
     private lateinit var binding: ActivityEditProfileBinding
     private lateinit var storage: FirebaseStorage
+
+    private var saveImg = false
 
     private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
@@ -84,6 +89,7 @@ class EditProfile : AppCompatActivity() {
                             Glide.with(this)
                                 .load(Uri.toString())
                                 .into(binding.profilePic)
+                            saveImg = true
                         }
                     }
                 }
@@ -120,15 +126,19 @@ class EditProfile : AppCompatActivity() {
                     }
 
                     // Save image
-                    val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
-                    val storageRef = storage.reference.child(path)
-                    val bitmap = (binding.profilePic.drawable as BitmapDrawable).bitmap
-                    val baos = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
-                    storageRef.putBytes(data).addOnFailureListener {
-                        Toast.makeText(this, "Unable to update profile", Toast.LENGTH_SHORT).show()
-                    }.addOnSuccessListener { taskSnapshot ->
+                    if (saveImg == true) {
+                        val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
+                        val storageRef = storage.reference.child(path)
+                        val bitmap = (binding.profilePic.drawable as BitmapDrawable).bitmap
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val data = baos.toByteArray()
+                        storageRef.putBytes(data).addOnFailureListener {
+                            Toast.makeText(this, "Unable to update profile", Toast.LENGTH_SHORT).show()
+                        }.addOnSuccessListener { taskSnapshot ->
+                            Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
                         Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show()
                     }
 
@@ -141,9 +151,11 @@ class EditProfile : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == EditProfile.CHOOSE_PHOTO){
             var img: ImageView = binding.profilePic
             img.setImageURI(data?.data)
+            saveImg = true
         }
     }
 

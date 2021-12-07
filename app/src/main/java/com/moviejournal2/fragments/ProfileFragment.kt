@@ -105,7 +105,7 @@ class ProfileFragment : Fragment() {
 
                         while (counter < 20) {
                             if (it2.child(counter.toString()).value != null) {
-                                var chip = Chip(getActivity())
+                                var chip = Chip(context)
                                 chip.setCheckable(false)
                                 chip.setText(it2.child(counter.toString()).child("title").value.toString())
                                 view.addView(chip)

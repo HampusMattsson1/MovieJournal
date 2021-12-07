@@ -36,8 +36,10 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 
 import android.app.ProgressDialog
+import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.Glide
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -91,16 +93,16 @@ class EditProfileFragment : Fragment() {
         var chips = List(size) { Chip(getActivity()) }.toMutableList()
         var chipsID = arrayOf<String>().toMutableList()
 
+        var customPic = false
+
 
         // Get database data
         reference.child(globalVars.Companion.userID).get().addOnSuccessListener {
             if (it.exists()) {
                 binding.username.text = it.child("username").value.toString().toEditable()
-//                binding.favmovie.text = it.child("favmovie").value.toString().toEditable()
 
                 database.getReference("genres").get().addOnSuccessListener { it2: DataSnapshot ->
                     if (it2.exists()) {
-//                        Toast.makeText(activity, "Genres found", Toast.LENGTH_SHORT).show()
                         size = it2.childrenCount.toInt()
                         counter = 0
                         var view: ChipGroup = binding.chipGroup
@@ -125,10 +127,12 @@ class EditProfileFragment : Fragment() {
                         // Get image
                         val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
                         val storageRef = storage.reference.child(path)
-                        storageRef.downloadUrl.addOnSuccessListener { Uri->
+
+                        storageRef.downloadUrl.addOnSuccessListener { Uri ->
                             Glide.with(this)
                                 .load(Uri.toString())
                                 .into(binding.profilePic)
+                            customPic = true
                         }
                     }
                 }
@@ -165,18 +169,19 @@ class EditProfileFragment : Fragment() {
                     }
 
                     // Save image
-                    val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
-                    val storageRef = storage.reference.child(path)
-                    val bitmap = (binding.profilePic.drawable as BitmapDrawable).bitmap
-                    val baos = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-                    val data = baos.toByteArray()
-                    storageRef.putBytes(data).addOnFailureListener {
-                        Toast.makeText(activity, "Unable to update profile", Toast.LENGTH_SHORT).show()
-                    }.addOnSuccessListener { taskSnapshot ->
-                        Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT).show()
+                    if (customPic) {
+                        val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
+                        val storageRef = storage.reference.child(path)
+                        val bitmap = (binding.profilePic.drawable as BitmapDrawable).bitmap
+                        val baos = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                        val data = baos.toByteArray()
+                        storageRef.putBytes(data).addOnFailureListener {
+                            Toast.makeText(activity, "Unable to update profile", Toast.LENGTH_SHORT).show()
+                        }.addOnSuccessListener { taskSnapshot ->
+                            Toast.makeText(activity, "Profile updated", Toast.LENGTH_SHORT).show()
+                        }
                     }
-
                 } else {
                     Toast.makeText(activity, "Unable to update profile", Toast.LENGTH_SHORT).show()
                 }
