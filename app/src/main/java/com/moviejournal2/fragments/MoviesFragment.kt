@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.moviejournal2.*
 
 // TODO: Rename parameter arguments, choose names that match
@@ -163,6 +164,12 @@ class MoviesFragment : Fragment() {
 
     }
 
+    //WatchList
+    private lateinit var watchList: RecyclerView
+    private lateinit var watchListAdapter: WatchListAdapter
+    private lateinit var watchListLayoutManager: LinearLayoutManager
+
+
     private fun onError(){
         Toast.makeText(requireActivity(), getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
@@ -180,6 +187,27 @@ class MoviesFragment : Fragment() {
         startActivity(intent)
     }
 
+    private fun showMovieDetailsWatchlist(item: WatchList){
+        val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
+        intent.putExtra(MOVIE_ID, item.id)
+        Log.i("showMovieDetails","${item.id}")
+        intent.putExtra(MOVIE_BACKDROP, item.backdropPath)
+        intent.putExtra(MOVIE_POSTER, item.posterPath)
+        intent.putExtra(MOVIE_TITLE, item.title)
+        intent.putExtra(MOVIE_RATING, item.rating)
+        intent.putExtra(MOVIE_RELEASE_DATE, item.releaseDate)
+        intent.putExtra(MOVIE_OVERVIEW, item.overview)
+        startActivity(intent)
+    }
+
+    private val db: AppDB by lazy{
+        Room.databaseBuilder(
+            requireActivity().applicationContext,
+            AppDB::class.java,
+            "movies.db"
+        ).allowMainThreadQueries().build()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -189,6 +217,7 @@ class MoviesFragment : Fragment() {
         popularMovies = rootView.findViewById<RecyclerView>(R.id.popular_movies)
         topRatedMovies = rootView.findViewById<RecyclerView>(R.id.top_rated_movies)
         upcomingMovies = rootView.findViewById<RecyclerView>(R.id.upcoming_movies)
+        watchList = rootView.findViewById<RecyclerView>(R.id.watchlist)
         popularMoviesLayoutManager = LinearLayoutManager(
             requireActivity(),
             LinearLayoutManager.HORIZONTAL,
@@ -200,6 +229,11 @@ class MoviesFragment : Fragment() {
             false
         )
         upcomingMoviesLayoutManager = LinearLayoutManager(
+            requireActivity(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        watchListLayoutManager = LinearLayoutManager(
             requireActivity(),
             LinearLayoutManager.HORIZONTAL,
             false
@@ -222,12 +256,59 @@ class MoviesFragment : Fragment() {
         }
         upcomingMovies.adapter = upcomingMoviesAdapter
 
+        watchList.layoutManager = watchListLayoutManager
+        watchListAdapter = WatchListAdapter(listOf()) {
+            when (it.type) {
+                is WatchListType.MovieType -> showMovieDetailsWatchlist(it)
+            }
+        }
+
+        watchList.adapter = watchListAdapter
+
+
         getPopularMovies()
         getTopRatedMovies()
         getUpcomingMovies()
+        getWatchList()
 
         return rootView
     }
+
+    private fun getWatchList() {
+        val movies = db.daoMovie().getAll()
+
+        val watchList = mutableListOf<WatchList>()
+
+        watchList.addAll(
+            movies.map { movie ->
+                WatchList(
+                    movie.id,
+                    movie.title,
+                    movie.overview,
+                    movie.posterPath,
+                    movie.backdropPath,
+                    movie.rating,
+                    movie.releaseDate,
+                    WatchListType.MovieType
+                )
+            }
+        )
+
+        watchListAdapter.updateItems(watchList)
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            getWatchList()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getWatchList()
+    }
+
+
 
 
 

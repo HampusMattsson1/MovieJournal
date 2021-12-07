@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.firebase.database.DatabaseReference
@@ -43,6 +44,44 @@ class MovieInfoActivity : AppCompatActivity() {
     private var recommendedMoviesPage = 1
     private var id: Int = 0
 
+    private lateinit var watchlistButton: ImageButton
+    private lateinit var likeButton: ImageButton
+
+    private val db: AppDB by lazy{
+        Room.databaseBuilder(
+            applicationContext,
+            AppDB::class.java,
+            "movies.db"
+        ).allowMainThreadQueries().build()
+    }
+
+    private val db2: AppDB by lazy{
+        Room.databaseBuilder(
+            applicationContext,
+            AppDB::class.java,
+            "movies2.db"
+        ).allowMainThreadQueries().build()
+    }
+
+    //This can return a null MovieUnit if the movie doesnt exist in the db
+    private fun getMovie(id: Long): MovieUnit?{
+        return db.daoMovie().findById(id)
+    }
+
+    private fun getMovie2(id: Long): MovieUnit?{
+        return db2.daoMovie().findById(id)
+    }
+
+
+    private var movieId = 0L
+    private var movieBackdrop = ""
+    private var moviePoster = ""
+    private var movieTitle = ""
+    private var movieRating = 0f
+    private var movieReleaseDate = ""
+    private var movieOverview = ""
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_info)
@@ -58,14 +97,15 @@ class MovieInfoActivity : AppCompatActivity() {
         overview = findViewById(R.id.movie_overview)
 
         val extras = intent.extras
+        watchlistButton = findViewById(R.id.watchlistBtn)
+        likeButton = findViewById(R.id.likeBtn)
 
         if(extras != null){
             id = extras.getInt(MOVIE_ID, 0)
             Log.i("MovieInfoActivity", "$id")
             fillDetails(extras)
 
-            val addButton: ImageButton = findViewById(R.id.addBtn) as ImageButton
-            addButton.setOnClickListener {
+            watchlistButton.setOnClickListener {
                 //Here try to push the id variable from line 54 to the WATCHLIST list in firebase db
                 reference.child(globalVars.Companion.userID).child("watchlist").get().addOnSuccessListener { it2 ->
                     // Check if the movie isn't already in the watchlist
@@ -92,9 +132,12 @@ class MovieInfoActivity : AppCompatActivity() {
                     }
                 }
             }
+            likeButton.setOnClickListener{
+
+            }
 
             val likeButton: ImageButton = findViewById(R.id.likeBtn) as ImageButton
-            addButton.setOnClickListener {
+            likeButton.setOnClickListener {
                 //Here try to push the id variable from line 54 to the  LIKED list in firebase db
                 reference.child(globalVars.Companion.userID).child("likedlist").get().addOnSuccessListener { it2 ->
                     // Check if the movie isn't already in the likedlist
@@ -138,6 +181,54 @@ class MovieInfoActivity : AppCompatActivity() {
         getRecommendedMovies()
     }
 
+    override fun onStart(){
+        super.onStart()
+
+        watchlistButton.setOnClickListener{
+            if (getMovie(movieId) == null){
+                val entity = MovieUnit(
+                    movieId,
+                    movieTitle,
+                    movieOverview,
+                    moviePoster,
+                    movieBackdrop,
+                    movieRating,
+                    movieReleaseDate
+                )
+                db.daoMovie().insert(entity)
+                watchlistButton.setBackgroundResource(R.drawable.add)
+                Toast.makeText(this, "Movie added to watchlist", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                db.daoMovie().delete(movieId)
+                watchlistButton.setBackgroundResource(R.drawable.remove)
+                Toast.makeText(this, "Movie removed from watchlist", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        likeButton.setOnClickListener{
+            if (getMovie2(movieId) == null){
+                val entity = MovieUnit(
+                    movieId,
+                    movieTitle,
+                    movieOverview,
+                    moviePoster,
+                    movieBackdrop,
+                    movieRating,
+                    movieReleaseDate
+                )
+                db2.daoMovie().insert(entity)
+                likeButton.setBackgroundResource(R.drawable.heart)
+                Toast.makeText(this, "Movie liked", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                db2.daoMovie().delete(movieId)
+                likeButton.setBackgroundResource(R.drawable.brokenheart)
+                Toast.makeText(this, "Movie unliked", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun fillDetails(extras: Bundle){
         extras.getString(MOVIE_BACKDROP)?.let{ backdropPath ->
             Glide.with(this)
@@ -152,10 +243,26 @@ class MovieInfoActivity : AppCompatActivity() {
                 .transform(CenterCrop())
                 .into(poster)
         }
-        title.text = extras.getString(MOVIE_TITLE, "")
-        rating.rating = extras.getFloat(MOVIE_RATING, 0f) / 2
-        releaseDate.text = extras.getString(MOVIE_RELEASE_DATE, "")
-        overview.text = extras.getString(MOVIE_OVERVIEW, "")
+        movieId = extras.getInt(MOVIE_ID).toLong()
+        movieBackdrop = extras.getString(MOVIE_BACKDROP, "")
+        moviePoster = extras.getString(MOVIE_POSTER, "")
+        movieTitle = extras.getString(MOVIE_TITLE, "")
+        movieRating = extras.getFloat(MOVIE_RATING, 0f)
+        movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
+        movieOverview = extras.getString(MOVIE_OVERVIEW, "")
+
+        title.text = movieTitle
+        rating.rating = movieRating / 2
+        releaseDate.text = movieReleaseDate
+        overview.text = movieOverview
+
+        val movie = getMovie(movieId)
+
+        if(movie == null){
+            watchlistButton.setBackgroundResource(R.drawable.add)
+        }else{
+            watchlistButton.setBackgroundResource(R.drawable.remove)
+        }
     }
 
     private fun getRecommendedMovies() {

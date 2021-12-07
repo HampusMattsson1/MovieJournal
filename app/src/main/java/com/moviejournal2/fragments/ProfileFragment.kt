@@ -3,28 +3,23 @@ package com.moviejournal2.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.util.TypedValue
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.databinding.DataBinderMapper
-import androidx.databinding.DataBindingComponent
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.*
-import com.moviejournal2.databinding.ActivityMainBinding.inflate
 import com.moviejournal2.databinding.FragmentProfileBinding
-import androidx.databinding.DataBindingUtil.setContentView as setContentView1
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -57,6 +52,19 @@ class ProfileFragment : Fragment() {
 
     private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
+    private lateinit var likedList: RecyclerView
+    private lateinit var likedListAdapter: LikedListAdapter
+    private lateinit var likedListLayoutManager: LinearLayoutManager
+
+    private val db2: AppDB by lazy{
+        Room.databaseBuilder(
+            requireActivity().applicationContext,
+            AppDB::class.java,
+            "movies2.db"
+        ).allowMainThreadQueries().build()
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,6 +73,22 @@ class ProfileFragment : Fragment() {
         reference = database.getReference("users")
         binding = FragmentProfileBinding.inflate(layoutInflater)
         storage = FirebaseStorage.getInstance()
+
+        likedList = binding.likedlist
+        likedListLayoutManager = LinearLayoutManager(
+            requireActivity(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        likedList.layoutManager = likedListLayoutManager
+        likedListAdapter = LikedListAdapter(listOf()) {
+            when (it.type) {
+                is LikedListType.MovieType -> showMovieDetailsLikedlist(it)
+            }
+        }
+        likedList.adapter = likedListAdapter
+        getLikedList()
+
 
         // Get database data
         reference.child(globalVars.Companion.userID).get().addOnSuccessListener {
@@ -112,6 +136,53 @@ class ProfileFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun showMovieDetailsLikedlist(item: LikedList){
+        val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
+        intent.putExtra(MOVIE_ID, item.id)
+        Log.i("showMovieDetails","${item.id}")
+        intent.putExtra(MOVIE_BACKDROP, item.backdropPath)
+        intent.putExtra(MOVIE_POSTER, item.posterPath)
+        intent.putExtra(MOVIE_TITLE, item.title)
+        intent.putExtra(MOVIE_RATING, item.rating)
+        intent.putExtra(MOVIE_RELEASE_DATE, item.releaseDate)
+        intent.putExtra(MOVIE_OVERVIEW, item.overview)
+        startActivity(intent)
+    }
+
+    private fun getLikedList() {
+        val movies = db2.daoMovie().getAll()
+
+        val likedList = mutableListOf<LikedList>()
+
+        likedList.addAll(
+            movies.map { movie ->
+                LikedList(
+                    movie.id,
+                    movie.title,
+                    movie.overview,
+                    movie.posterPath,
+                    movie.backdropPath,
+                    movie.rating,
+                    movie.releaseDate,
+                    LikedListType.MovieType
+                )
+            }
+        )
+
+        likedListAdapter.updateItems(likedList)
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if(!hidden){
+            getLikedList()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getLikedList()
     }
 
     companion object {
