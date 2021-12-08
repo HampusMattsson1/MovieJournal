@@ -76,7 +76,7 @@ class EditJournalEntry : AppCompatActivity() {
 
                     // Save picture and or recording
                     if (uploadImg) {
-                        val path = "journal/" + globalVars.Companion.userID + "/" + date + ".jpg"
+                        val path = "journal/" + globalVars.Companion.userID + "/" + date + "/img.jpg"
                         val storageRef = storage.reference.child(path)
                         val bitmap = (binding.picture.drawable as BitmapDrawable).bitmap
                         val baos = ByteArrayOutputStream()
