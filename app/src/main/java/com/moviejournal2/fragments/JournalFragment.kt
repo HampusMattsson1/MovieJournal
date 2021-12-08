@@ -1,11 +1,23 @@
 package com.moviejournal2.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CalendarView
+import android.widget.Toast
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import com.moviejournal2.EditJournalEntry
+import com.moviejournal2.EditProfile
 import com.moviejournal2.R
+import com.moviejournal2.databinding.FragmentJournalBinding
+import com.moviejournal2.databinding.FragmentProfileBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,12 +42,38 @@ class JournalFragment : Fragment() {
         }
     }
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+    private lateinit var binding: FragmentJournalBinding
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_journal, container, false)
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        reference = database.getReference("users")
+        binding = FragmentJournalBinding.inflate(layoutInflater)
+
+
+        val calendar = CalendarView(requireContext())
+
+        calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            val c: Calendar = Calendar.getInstance()
+            c.set(year,month,dayOfMonth)
+            calendar.date = c.timeInMillis
+        }
+
+
+        // New entry button
+        binding.newEntry.setOnClickListener {
+            Toast.makeText(requireContext(), SimpleDateFormat("dd/MM/yyyy").format(calendar.date), Toast.LENGTH_SHORT).show()
+            val i = Intent(requireContext(), EditJournalEntry::class.java)
+            i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
+            startActivity(i)
+        }
+
+        binding.calendar.addView(calendar)
+        return binding.root
     }
 
     companion object {
