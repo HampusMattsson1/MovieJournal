@@ -127,7 +127,7 @@ class EditProfile : AppCompatActivity() {
 
                     // Save image
                     if (saveImg == true) {
-                        val path = "images/" + globalVars.Companion.userID.toString() + ".jpg"
+                        val path = "images/" + globalVars.Companion.userID + ".jpg"
                         val storageRef = storage.reference.child(path)
                         val bitmap = (binding.profilePic.drawable as BitmapDrawable).bitmap
                         val baos = ByteArrayOutputStream()

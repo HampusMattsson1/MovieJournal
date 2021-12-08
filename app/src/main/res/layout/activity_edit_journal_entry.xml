@@ -68,13 +68,14 @@
             android:text="Text"/>
 
         <EditText
+            android:id="@+id/journalText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginRight="40dp"
             android:layout_marginLeft="40dp"
-            android:hint="Text"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="40dp"
+            android:hint="Text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -148,15 +149,16 @@
                 android:id="@+id/recording"
                 android:layout_width="100dp"
                 android:layout_height="80dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:gravity="center"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/upload"/>
+                android:src="@drawable/upload" />
 
         </LinearLayout>
 
         <Button
+            android:id="@+id/save"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
