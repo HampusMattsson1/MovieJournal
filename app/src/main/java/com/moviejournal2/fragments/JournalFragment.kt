@@ -69,6 +69,7 @@ class JournalFragment : Fragment() {
             Toast.makeText(requireContext(), SimpleDateFormat("dd/MM/yyyy").format(calendar.date), Toast.LENGTH_SHORT).show()
             val i = Intent(requireContext(), EditJournalEntry::class.java)
             i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
+            i.putExtra("savedate", SimpleDateFormat("yyyy/MM/dd").format(calendar.date))
             startActivity(i)
         }
 

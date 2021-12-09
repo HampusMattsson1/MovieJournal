@@ -2,7 +2,12 @@ package com.moviejournal2
 
 import MoviesAdapter
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils.replace
@@ -10,12 +15,16 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationBarItemView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.fragments.*
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +34,15 @@ class MainActivity : AppCompatActivity() {
     private val searchFragment = SearchFragment()
     private val profileFragment = ProfileFragment()
 
+    private lateinit var database: FirebaseDatabase
+    private lateinit var reference: DatabaseReference
+    private lateinit var notificationChannel: NotificationChannel
+    private lateinit var notificationManager: NotificationManager
 
+    private val channelId = "12345"
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -64,6 +81,34 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
         */
+
+        database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
+        reference = database.getReference("users/" + globalVars.Companion.userID + "/requests")
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Friend request notifications
+//        reference.get().addOnSuccessListener {
+//            if (it.exists() && it.childrenCount > 0) {
+//                it.children.forEach { c ->
+//                    var builder = NotificationCompat.Builder(this, channelId)
+//                        .setSmallIcon(R.drawable.profile)
+//                        .setContentTitle("Friend request")
+//                        .setContentText("Much longer text that cannot fit one line...")
+//                        .setStyle(NotificationCompat.BigTextStyle()
+//                            .bigText("Much longer text that cannot fit one line..."))
+//                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//
+//                    notificationChannel = NotificationChannel(channelId, "test", NotificationManager .IMPORTANCE_HIGH)
+//                    notificationChannel.lightColor = Color.BLUE
+//                    notificationChannel.enableVibration(true)
+//
+//                    notificationManager.createNotificationChannel(notificationChannel)
+//
+//                    notificationManager.notify(12345, builder.build())
+//                }
+//            }
+//        }
+
     }
 
     private fun onPopularMoviesFetched(movies: List<Movie>){

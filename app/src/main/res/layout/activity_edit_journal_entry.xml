@@ -100,60 +100,128 @@
             android:layout_marginTop="15dp"
             android:text="Attachments"/>
 
-        <LinearLayout
-            android:id="@+id/text"
-            android:layout_marginTop="10dp"
-            android:layout_width="300dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/text"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="20dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
-                android:text="Picture"/>
+<!--            <TextView-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_marginLeft="25dp"-->
+<!--                android:layout_marginRight="25dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:text="Picture"/>-->
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
-                android:text="Recording"/>
+<!--            <TextView-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_marginLeft="25dp"-->
+<!--                android:layout_marginRight="25dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:text="Recording"/>-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
+
+<!--        <LinearLayout-->
+<!--            android:id="@+id/files"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:orientation="horizontal">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/picture"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="80dp"-->
+<!--                android:layout_marginLeft="25dp"-->
+<!--                android:layout_marginRight="25dp"-->
+<!--                android:gravity="center"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:src="@drawable/upload"/>-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/recording"-->
+<!--                android:layout_width="100dp"-->
+<!--                android:layout_height="80dp"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_marginLeft="25dp"-->
+<!--                android:layout_marginRight="25dp"-->
+<!--                android:gravity="center"-->
+<!--                android:src="@drawable/upload" />-->
+
+<!--        </LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/files"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:text="Picture"/>
 
             <ImageView
                 android:id="@+id/picture"
+                android:layout_marginTop="5dp"
                 android:layout_width="100dp"
                 android:layout_height="80dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
+                android:layout_gravity="center_horizontal"
                 android:src="@drawable/upload"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:text="Recording"/>
 
             <ImageView
                 android:id="@+id/recording"
+                android:layout_marginTop="5dp"
                 android:layout_width="100dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
-                android:gravity="center"
-                android:src="@drawable/upload" />
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/upload"/>
+
+            <LinearLayout
+                android:id="@+id/listen"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/filename"
+                    android:layout_marginTop="5dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="play"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
