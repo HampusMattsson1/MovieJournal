@@ -30,6 +30,9 @@ import com.moviejournal2.databinding.FragmentJournalBinding
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
 import android.provider.MediaStore
+import androidx.room.Room
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import java.io.File
 import java.io.FileInputStream
 
@@ -45,8 +48,20 @@ class EditJournalEntry : AppCompatActivity() {
     private var uploadRec = false
     private var uploadType = 0
     private lateinit var recUri: Uri
-
     private lateinit var media: MediaPlayer
+
+
+    private fun getMovie(id: Long): MovieUnit?{
+        return db.daoMovie().findById(id)
+    }
+
+    private val db: AppDB by lazy{
+        Room.databaseBuilder(
+            applicationContext,
+            AppDB::class.java,
+            "movies.db"
+        ).allowMainThreadQueries().build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +75,7 @@ class EditJournalEntry : AppCompatActivity() {
         val b: Bundle? = getIntent().getExtras()
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
+        val id = b?.getLong(MOVIE_ID)
 
         binding.date.setText(date)
 
@@ -82,7 +98,10 @@ class EditJournalEntry : AppCompatActivity() {
 
 
         // Get data from database
-
+        if (id != null) {
+            val movie = getMovie(id)
+            fillDetails(movie!!)
+        }
 
 
 
@@ -136,6 +155,40 @@ class EditJournalEntry : AppCompatActivity() {
         }
 
 
+    }
+
+    private fun fillDetails(m: MovieUnit){
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w1280${m.backdropPath}")
+            .transform(CenterCrop())
+            .into(binding.backdrop)
+
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w342${m.posterPath}")
+            .transform(CenterCrop())
+            .into(binding.moviePoster)
+
+
+//        movieId = extras.getInt(MOVIE_ID).toLong()
+//        movieBackdrop = extras.getString(MOVIE_BACKDROP, "")
+//        moviePoster = extras.getString(MOVIE_POSTER, "")
+//        movieTitle = extras.getString(MOVIE_TITLE, "")
+//        movieRating = extras.getFloat(MOVIE_RATING, 0f)
+//        movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
+//        movieOverview = extras.getString(MOVIE_OVERVIEW, "")
+//
+        binding.movieTitle.text = m.title
+//        rating.rating = movieRating / 2
+        binding.movieReleaseDate.text = m.releaseDate
+        binding.movieOverview.text = m.overview
+//
+//        val movie = getMovie(movieId)
+//
+//        if(movie == null){
+//            watchlistButton.setBackgroundResource(R.drawable.add)
+//        }else{
+//            watchlistButton.setBackgroundResource(R.drawable.remove)
+//        }
     }
 
     @SuppressLint("Range")

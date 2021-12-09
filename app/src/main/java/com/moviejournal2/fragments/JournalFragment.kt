@@ -13,6 +13,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.EditJournalEntry
 import com.moviejournal2.EditProfile
+import com.moviejournal2.MOVIE_ID
 import com.moviejournal2.R
 import com.moviejournal2.databinding.FragmentJournalBinding
 import com.moviejournal2.databinding.FragmentProfileBinding
@@ -70,6 +71,7 @@ class JournalFragment : Fragment() {
             val i = Intent(requireContext(), EditJournalEntry::class.java)
             i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
             i.putExtra("savedate", SimpleDateFormat("yyyy/MM/dd").format(calendar.date))
+            i.putExtra(MOVIE_ID, 370172)
             startActivity(i)
         }
 
