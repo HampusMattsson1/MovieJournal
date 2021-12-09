@@ -154,7 +154,6 @@ class EditJournalEntry : AppCompatActivity() {
             }
         }
 
-
     }
 
     private fun fillDetails(m: MovieUnit){
@@ -168,27 +167,10 @@ class EditJournalEntry : AppCompatActivity() {
             .transform(CenterCrop())
             .into(binding.moviePoster)
 
-
-//        movieId = extras.getInt(MOVIE_ID).toLong()
-//        movieBackdrop = extras.getString(MOVIE_BACKDROP, "")
-//        moviePoster = extras.getString(MOVIE_POSTER, "")
-//        movieTitle = extras.getString(MOVIE_TITLE, "")
-//        movieRating = extras.getFloat(MOVIE_RATING, 0f)
-//        movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
-//        movieOverview = extras.getString(MOVIE_OVERVIEW, "")
-//
         binding.movieTitle.text = m.title
-//        rating.rating = movieRating / 2
+        binding.movieRating.rating = m.rating / 2
         binding.movieReleaseDate.text = m.releaseDate
         binding.movieOverview.text = m.overview
-//
-//        val movie = getMovie(movieId)
-//
-//        if(movie == null){
-//            watchlistButton.setBackgroundResource(R.drawable.add)
-//        }else{
-//            watchlistButton.setBackgroundResource(R.drawable.remove)
-//        }
     }
 
     @SuppressLint("Range")
