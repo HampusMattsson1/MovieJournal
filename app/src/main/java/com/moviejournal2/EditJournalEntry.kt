@@ -30,6 +30,7 @@ import com.moviejournal2.databinding.FragmentJournalBinding
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
 import android.provider.MediaStore
+import android.text.Editable
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -50,6 +51,7 @@ class EditJournalEntry : AppCompatActivity() {
     private lateinit var recUri: Uri
     private lateinit var media: MediaPlayer
 
+    private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
     private fun getMovie(id: Long): MovieUnit?{
         return db.daoMovie().findById(id)
@@ -76,6 +78,8 @@ class EditJournalEntry : AppCompatActivity() {
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
         val id = b?.getLong(MOVIE_ID)
+//        val dataid = b?.getInt("dataid")
+        val dataid = 0
 
         binding.date.setText(date)
 
@@ -98,11 +102,38 @@ class EditJournalEntry : AppCompatActivity() {
 
 
         // Get data from database
-        if (id != null) {
+        if (id != null && savedate != null) {
+            // Set movie from id
             val movie = getMovie(id)
             fillDetails(movie!!)
-        }
 
+            // Journal text
+            reference.child(globalVars.Companion.userID).child("journal")
+                .child(savedate).child(dataid.toString()).child("text").get().addOnSuccessListener {
+                    if (it.value != null) {
+                        binding.journalText.text = it.value.toString().toEditable()
+                    }
+            }
+
+            // Journal image
+            val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
+            var storageRef = storage.reference.child(path+"/img.jpg")
+            storageRef.downloadUrl.addOnSuccessListener { Uri->
+                Glide.with(this)
+                    .load(Uri.toString())
+                    .into(binding.picture)
+            }
+
+            // Journal recording
+            storageRef = storage.reference.child(path+"/rec.mp3")
+            storageRef.downloadUrl.addOnSuccessListener { Uri->
+//                Glide.with(this)
+//                    .load(Uri.toString())
+//                    .into(binding.recording)
+                recUri = Uri
+                setupMedia()
+            }
+        }
 
 
         // Save button
@@ -111,12 +142,20 @@ class EditJournalEntry : AppCompatActivity() {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
 
                     // Check which id to use
-                    var index = 0
-                    while (index < it2.childrenCount) {
-                        if (it2.child(index.toString()).value == null) {
-                            break
+                    var index = -1
+                    it2.children.forEach { c->
+                        if (c.key == dataid.toString()) {
+                            index = dataid
                         }
-                        index += 1
+                    }
+                    if (index == -1) {
+                        index = 0
+                        while (index < it2.childrenCount) {
+                            if (it2.child(index.toString()).value == null) {
+                                break
+                            }
+                            index += 1
+                        }
                     }
 
                     it2.child(index.toString()).child("text").ref.setValue(binding.journalText.text.toString())
@@ -149,11 +188,9 @@ class EditJournalEntry : AppCompatActivity() {
                     if (success) {
                         Toast.makeText(this, "Journal entry saved", Toast.LENGTH_SHORT).show()
                     }
-
                 }
             }
         }
-
     }
 
     private fun fillDetails(m: MovieUnit){
@@ -186,44 +223,48 @@ class EditJournalEntry : AppCompatActivity() {
         if (uploadType == 1) {
             if (resultCode == Activity.RESULT_OK && requestCode == EditJournalEntry.CHOOSE_PHOTO){
                 recUri = data?.data!!
-                media = MediaPlayer()
-                media.setAudioAttributes(
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .setUsage(AudioAttributes.USAGE_MEDIA)
-                        .build()
-                )
-                try {
-                    media.setDataSource(this, recUri)
-                    media.prepare()
-
-                    binding.recording.visibility = GONE
-                    binding.listen.visibility = VISIBLE
-
-                    var fileName = ""
-                    var cursor: Cursor? = null
-                    cursor = contentResolver.query(
-                        recUri, arrayOf(
-                            MediaStore.Images.ImageColumns.DISPLAY_NAME
-                        ), null, null, null
-                    )
-                    if (cursor != null && cursor.moveToFirst()) {
-                        fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME))
-                    }
-                    if (cursor != null) {
-                        cursor.close()
-                    }
-
-                    binding.filename.setText(fileName)
-                    binding.play.setOnClickListener {
-                        media.start()
-                    }
-                    uploadRec = true
-
-                } catch(e: Exception) {
-                    android.widget.Toast.makeText(this, "Unable to load recording", android.widget.Toast.LENGTH_SHORT).show()
-                }
+                setupMedia()
+                uploadRec = true
             }
+        }
+    }
+
+    private fun setupMedia() {
+        media = MediaPlayer()
+        media.setAudioAttributes(
+            AudioAttributes.Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .build()
+        )
+        try {
+            media.setDataSource(this, recUri)
+            media.prepare()
+
+            binding.recording.visibility = GONE
+            binding.listen.visibility = VISIBLE
+
+            var fileName = ""
+            var cursor: Cursor? = null
+            cursor = contentResolver.query(
+                recUri, arrayOf(
+                    MediaStore.Images.ImageColumns.DISPLAY_NAME
+                ), null, null, null
+            )
+            if (cursor != null && cursor.moveToFirst()) {
+                fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME))
+            }
+            if (cursor != null) {
+                cursor.close()
+            }
+
+            binding.filename.setText(fileName)
+            binding.play.setOnClickListener {
+                media.start()
+            }
+
+        } catch(e: Exception) {
+            android.widget.Toast.makeText(this, "Unable to load recording", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 
