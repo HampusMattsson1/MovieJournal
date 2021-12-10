@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -94,26 +95,37 @@ open class MainActivity : AppCompatActivity() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Friend request notifications
-//        reference.get().addOnSuccessListener {
-//            if (it.exists() && it.childrenCount > 0) {
-//                it.children.forEach { c ->
-//                    var builder = NotificationCompat.Builder(this, channelId)
-//                        .setSmallIcon(R.drawable.profile)
-//                        .setContentTitle("Friend request")
-//                        .setContentText("Much longer text that cannot fit one line...")
-//                        .setStyle(NotificationCompat.BigTextStyle()
-//                            .bigText("Much longer text that cannot fit one line..."))
-//                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        reference.get().addOnSuccessListener {
+            if (it.exists() && it.childrenCount > 0) {
+                it.children.forEach { c ->
+                    database.getReference("users/"+c.value.toString()+"/username").get()
+                        .addOnSuccessListener { it2->
+                        var builder = NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.profile)
+                            .setContentTitle("Friend request")
+                            .setContentText(it2.value.toString()+" wants to be your friend!")
+                            .setStyle(NotificationCompat.BigTextStyle()
+                                .bigText("Much longer text that cannot fit one line..."))
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                        with(NotificationManagerCompat.from(this)) {
+                            notify(c.key!!.toInt(), builder.build())
+                        }
+                    }
+                }
+            }
+        }
+
+//        var builder = NotificationCompat.Builder(this)
+//            .setSmallIcon(R.drawable.profile)
+//            .setContentTitle("Friend request")
+//            .setContentText("Much longer text that cannot fit one line...")
+//            .setStyle(NotificationCompat.BigTextStyle()
+//                .bigText("Much longer text that cannot fit one line..."))
+//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //
-//                    notificationChannel = NotificationChannel(channelId, "test", NotificationManager .IMPORTANCE_HIGH)
-//                    notificationChannel.lightColor = Color.BLUE
-//                    notificationChannel.enableVibration(true)
-//
-//                    notificationManager.createNotificationChannel(notificationChannel)
-//
-//                    notificationManager.notify(12345, builder.build())
-//                }
-//            }
+//        with(NotificationManagerCompat.from(this)) {
+//            notify(12345, builder.build())
 //        }
 
     }

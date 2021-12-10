@@ -87,10 +87,9 @@ class EditJournalEntry : AppCompatActivity() {
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
         var moviename = b?.getString("movie")
-        val dataid = b?.getInt("id")
+        val dataid = b?.getInt("id")!!
         val new = b?.getBoolean("new")
 
-//        Toast.makeText(this, dataid!!, Toast.LENGTH_SHORT).show()
 
         binding.date.setText(date)
 
