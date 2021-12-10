@@ -95,8 +95,23 @@ class JournalFragment : Fragment() {
         // New entry button
         binding.newEntry.setOnClickListener {
             val i = Intent(requireContext(), EditJournalEntry::class.java)
+            val savedate = SimpleDateFormat("yyyy/MM/dd").format(calendar.date)
+            var index = 0
+            reference.child(globalVars.Companion.userID).child("journal")
+            .child(savedate).get().addOnSuccessListener { d->
+                if (d.exists()) {
+                    while (index < d.childrenCount) {
+//                        Toast.makeText(activity, d.child(index.toString()).child("movie").value.toString(), Toast.LENGTH_SHORT).show()
+                        if (d.child(index.toString()).child("movie").exists() != false) {
+                            break
+                        }
+                        index += 1
+                    }
+                }
+            }
+            i.putExtra("id", index)
             i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
-            i.putExtra("savedate", SimpleDateFormat("yyyy/MM/dd").format(calendar.date))
+            i.putExtra("savedate", savedate)
             i.putExtra("new", true)
             if (activity?.intent?.extras?.getString("movie") != null) {
                 i.putExtra("movie", activity?.intent?.extras?.getString("movie"))
@@ -115,6 +130,7 @@ class JournalFragment : Fragment() {
         reference.child(globalVars.Companion.userID).child("journal")
             .child(savedate).get().addOnSuccessListener {
                 if (it.exists()) {
+                    Toast.makeText(activity, it.childrenCount.toString(), Toast.LENGTH_SHORT).show()
                     var counter = 1
                     it.children.forEach { c->
                         // Get movie
@@ -140,7 +156,7 @@ class JournalFragment : Fragment() {
                                 i.putExtra("savedate", savedate)
                                 i.putExtra("new", false)
                                 i.putExtra("movie", movie.title)
-                                i.putExtra("dataid", c.key)
+                                i.putExtra("id", c.key)
                                 startActivity(i)
                             }
 
@@ -164,7 +180,6 @@ class JournalFragment : Fragment() {
                             e.addView(content)
 
                             binding.entries.addView(e)
-
                         }
                         counter += 1
                     }

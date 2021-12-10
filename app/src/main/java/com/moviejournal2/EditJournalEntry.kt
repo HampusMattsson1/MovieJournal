@@ -87,9 +87,10 @@ class EditJournalEntry : AppCompatActivity() {
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
         var moviename = b?.getString("movie")
-        val dataid = b?.getInt("dataid")
+        val dataid = b?.getInt("id")
         val new = b?.getBoolean("new")
 
+//        Toast.makeText(this, dataid!!, Toast.LENGTH_SHORT).show()
 
         binding.date.setText(date)
 
@@ -112,7 +113,7 @@ class EditJournalEntry : AppCompatActivity() {
 
 
         // Get data from database
-        if (new != null && new == false && savedate != null) {
+        if (new != null && new == false && savedate != null && dataid != null) {
 
             // get moviename from database
             reference.child(globalVars.Companion.userID).child("journal")
@@ -157,6 +158,7 @@ class EditJournalEntry : AppCompatActivity() {
         // If new
         if (new != null && new == true) {
             getRequestedMovie(1, moviename!!, ::success, ::failure)
+            Toast.makeText(this, dataid.toString(), Toast.LENGTH_SHORT).show()
         }
 
 
@@ -165,33 +167,16 @@ class EditJournalEntry : AppCompatActivity() {
             if (savedate != null && moviename != null && dataid != null) {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
 
-                    // Check which id to use
-                    var index = -1
-                    it2.children.forEach { c->
-                        if (c.key == dataid.toString()) {
-                            index = dataid
-                        }
-                    }
-                    if (index == -1) {
-                        index = 0
-                        while (index < it2.childrenCount) {
-                            if (it2.child(index.toString()).value == null) {
-                                break
-                            }
-                            index += 1
-                        }
-                    }
-
                     // Text
-                    it2.child(index.toString()).child("text").ref.setValue(binding.journalText.text.toString())
+                    it2.child(dataid.toString()).child("text").ref.setValue(binding.journalText.text.toString())
 
                     // Movie id
-                    it2.child(index.toString()).child("movie").ref.setValue(moviename)
+                    it2.child(dataid.toString()).child("movie").ref.setValue(moviename)
 
                     var success = true
 
                     // Save picture and or recording
-                    val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + index.toString()
+                    val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
 
                     if (uploadImg) {
                         val storageRef = storage.reference.child(path+"/img.jpg")
