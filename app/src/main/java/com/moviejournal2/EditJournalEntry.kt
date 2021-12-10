@@ -2,7 +2,6 @@ package com.moviejournal2
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -12,21 +11,14 @@ import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.graphics.drawable.toDrawable
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.databinding.ActivityEditJournalEntryBinding
-import com.moviejournal2.databinding.FragmentJournalBinding
 import java.io.ByteArrayOutputStream
 import java.lang.Exception
 import android.provider.MediaStore
@@ -34,8 +26,7 @@ import android.text.Editable
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import java.io.File
-import java.io.FileInputStream
+import com.moviejournal2.MoviesRepository.getRequestedMovie
 
 
 class EditJournalEntry : AppCompatActivity() {
@@ -53,8 +44,26 @@ class EditJournalEntry : AppCompatActivity() {
 
     private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
-    private fun getMovie(id: Long): MovieUnit?{
-        return db.daoMovie().findById(id)
+
+    private fun failure() {
+        Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun success(movies: List<Movie>) {
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w1280${movies[0].backdropPath}")
+            .transform(CenterCrop())
+            .into(binding.backdrop)
+
+        Glide.with(this)
+            .load("https://image.tmdb.org/t/p/w342${movies[0].posterPath}")
+            .transform(CenterCrop())
+            .into(binding.moviePoster)
+
+        binding.movieTitle.text = movies[0].title
+        binding.movieRating.rating = movies[0].rating / 2
+        binding.movieReleaseDate.text = movies[0].releaseDate
+        binding.movieOverview.text = movies[0].overview
     }
 
     private val db: AppDB by lazy{
@@ -74,12 +83,13 @@ class EditJournalEntry : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
         setContentView(binding.root)
 
-        val b: Bundle? = getIntent().getExtras()
+        val b: Bundle? = intent.extras
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
-        val id = b?.getLong(MOVIE_ID)
-//        val dataid = b?.getInt("dataid")
-        val dataid = 0
+        var moviename = b?.getString("movie")
+        val dataid = b?.getInt("dataid")
+        val new = b?.getBoolean("new")
+
 
         binding.date.setText(date)
 
@@ -102,43 +112,57 @@ class EditJournalEntry : AppCompatActivity() {
 
 
         // Get data from database
-        if (id != null && savedate != null) {
-            // Set movie from id
-            val movie = getMovie(id)
-            fillDetails(movie!!)
+        if (new != null && new == false && savedate != null) {
 
-            // Journal text
+            // get moviename from database
             reference.child(globalVars.Companion.userID).child("journal")
-                .child(savedate).child(dataid.toString()).child("text").get().addOnSuccessListener {
+                .child(savedate).child(dataid.toString()).child("movie").get().addOnSuccessListener {
                     if (it.value != null) {
-                        binding.journalText.text = it.value.toString().toEditable()
+                        moviename = it.value.toString()
                     }
-            }
+                }.addOnFailureListener {
+                    moviename = null
+                }
 
-            // Journal image
-            val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
-            var storageRef = storage.reference.child(path+"/img.jpg")
-            storageRef.downloadUrl.addOnSuccessListener { Uri->
-                Glide.with(this)
-                    .load(Uri.toString())
-                    .into(binding.picture)
-            }
+            if (moviename != null && savedate != null) {
+//             Set movie from name
+                getRequestedMovie(1, moviename!!, ::success, ::failure)
 
-            // Journal recording
-            storageRef = storage.reference.child(path+"/rec.mp3")
-            storageRef.downloadUrl.addOnSuccessListener { Uri->
-//                Glide.with(this)
-//                    .load(Uri.toString())
-//                    .into(binding.recording)
-                recUri = Uri
-                setupMedia()
+                // Journal text
+                reference.child(globalVars.Companion.userID).child("journal")
+                    .child(savedate).child(dataid.toString()).child("text").get().addOnSuccessListener {
+                        if (it.value != null) {
+                            binding.journalText.text = it.value.toString().toEditable()
+                        }
+                    }
+
+                // Journal image
+                val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
+                var storageRef = storage.reference.child(path+"/img.jpg")
+                storageRef.downloadUrl.addOnSuccessListener { Uri->
+                    Glide.with(this)
+                        .load(Uri.toString())
+                        .into(binding.picture)
+                }
+
+                // Journal recording
+                storageRef = storage.reference.child(path+"/rec.mp3")
+                storageRef.downloadUrl.addOnSuccessListener { Uri->
+                    recUri = Uri
+                    setupMedia()
+                }
             }
+        }
+
+        // If new
+        if (new != null && new == true) {
+            getRequestedMovie(1, moviename!!, ::success, ::failure)
         }
 
 
         // Save button
         binding.save.setOnClickListener {
-            if (savedate != null) {
+            if (savedate != null && moviename != null && dataid != null) {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
 
                     // Check which id to use
@@ -158,7 +182,11 @@ class EditJournalEntry : AppCompatActivity() {
                         }
                     }
 
+                    // Text
                     it2.child(index.toString()).child("text").ref.setValue(binding.journalText.text.toString())
+
+                    // Movie id
+                    it2.child(index.toString()).child("movie").ref.setValue(moviename)
 
                     var success = true
 
@@ -193,22 +221,6 @@ class EditJournalEntry : AppCompatActivity() {
         }
     }
 
-    private fun fillDetails(m: MovieUnit){
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w1280${m.backdropPath}")
-            .transform(CenterCrop())
-            .into(binding.backdrop)
-
-        Glide.with(this)
-            .load("https://image.tmdb.org/t/p/w342${m.posterPath}")
-            .transform(CenterCrop())
-            .into(binding.moviePoster)
-
-        binding.movieTitle.text = m.title
-        binding.movieRating.rating = m.rating / 2
-        binding.movieReleaseDate.text = m.releaseDate
-        binding.movieOverview.text = m.overview
-    }
 
     @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -27,7 +27,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.fragments.*
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
     private val journalFragment = JournalFragment()
     private val friendsFragment = FriendsFragment()
     private val moviesFragment = MoviesFragment()
@@ -46,7 +46,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        replaceFragment(moviesFragment)
+
+        val b: Bundle? = getIntent().getExtras()
+        val fragment = b?.getInt("fragment")
+        if (fragment == 0) {
+            replaceFragment(moviesFragment)
+        } else {
+            replaceFragment(journalFragment)
+        }
 
 
 
@@ -121,14 +128,24 @@ class MainActivity : AppCompatActivity() {
     }
     */
 
-    fun replaceFragment(fragment: Fragment){
-        if(fragment !=null) {
+    open fun replaceFragment(fragment: Fragment){
+        if(fragment != null) {
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fragment_container, fragment)
             transaction.commit()
         }
     }
 }
+
+//class changeFragment : MainActivity() {
+//    fun replaceFragment(fragment: Fragment){
+//        if(fragment !=null) {
+//            val transaction = supportFragmentManager.beginTransaction()
+//            transaction.replace(R.id.fragment_container, fragment)
+//            transaction.commit()
+//        }
+//    }
+//}
 
 
 class globalVars : Application() {

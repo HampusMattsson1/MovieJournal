@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -14,6 +15,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.MoviesRepository.getRecommendedMovies
+import com.moviejournal2.fragments.JournalFragment
+import java.text.SimpleDateFormat
 
 const val MOVIE_ID = "extra_movie_id"
 const val MOVIE_BACKDROP = "extra_movie_backdrop"
@@ -46,6 +49,7 @@ class MovieInfoActivity : AppCompatActivity() {
 
     private lateinit var watchlistButton: ImageButton
     private lateinit var likeButton: ImageButton
+    private lateinit var journalButton: ImageButton
 
     private val db: AppDB by lazy{
         Room.databaseBuilder(
@@ -99,71 +103,13 @@ class MovieInfoActivity : AppCompatActivity() {
         val extras = intent.extras
         watchlistButton = findViewById(R.id.watchlistBtn)
         likeButton = findViewById(R.id.likeBtn)
+        journalButton = findViewById(R.id.journalBtn)
 
         if(extras != null){
             id = extras.getInt(MOVIE_ID, 0)
             Log.i("MovieInfoActivity", "$id")
             fillDetails(extras)
 
-            watchlistButton.setOnClickListener {
-                //Here try to push the id variable from line 54 to the WATCHLIST list in firebase db
-                reference.child(globalVars.Companion.userID).child("watchlist").get().addOnSuccessListener { it2 ->
-                    // Check if the movie isn't already in the watchlist
-                    var exist = 0
-                    it2.children.forEach { c ->
-                        if (c.value.toString() == id.toString()) {
-                            exist = 1
-                        }
-                    }
-
-                    if (exist == 0) {
-                        var index = 0
-                        while (index < it2.childrenCount) {
-                            if (it2.child(index.toString()).value == null) {
-                                break
-                            }
-                            index += 1
-                        }
-                        it2.ref.child(index.toString()).ref.setValue(id.toString()).addOnSuccessListener { it3 ->
-                            Toast.makeText(this, "Movie added to watchlist", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(this, "Movie already in watchlist", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            likeButton.setOnClickListener{
-
-            }
-
-            val likeButton: ImageButton = findViewById(R.id.likeBtn) as ImageButton
-            likeButton.setOnClickListener {
-                //Here try to push the id variable from line 54 to the  LIKED list in firebase db
-                reference.child(globalVars.Companion.userID).child("likedlist").get().addOnSuccessListener { it2 ->
-                    // Check if the movie isn't already in the likedlist
-                    var exist = 0
-                    it2.children.forEach { c ->
-                        if (c.value.toString() == id.toString()) {
-                            exist = 1
-                        }
-                    }
-
-                    if (exist == 0) {
-                        var index = 0
-                        while (index < it2.childrenCount) {
-                            if (it2.child(index.toString()).value == null) {
-                                break
-                            }
-                            index += 1
-                        }
-                        it2.ref.child(index.toString()).ref.setValue(id.toString()).addOnSuccessListener { it3 ->
-                            Toast.makeText(this, "Movie added to likedlist", Toast.LENGTH_SHORT).show()
-                        }
-                    } else {
-                        Toast.makeText(this, "Movie already in likedlist", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
         }else{
             finish()
         }
@@ -225,6 +171,15 @@ class MovieInfoActivity : AppCompatActivity() {
                 db2.daoMovie().delete(movieId)
                 likeButton.setBackgroundResource(R.drawable.brokenheart)
                 Toast.makeText(this, "Movie unliked", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        journalButton.setOnClickListener{
+            if (movieTitle != "") {
+                val i = Intent(this, MainActivity::class.java)
+                i.putExtra("movie", movieTitle)
+                i.putExtra("fragment", 1)
+                startActivity(i)
             }
         }
     }

@@ -66,6 +66,17 @@
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/movie_title"
                 app:layout_constraintTop_toBottomOf="@+id/movie_title" />
+
+            <ImageButton
+                android:id="@+id/journalBtn"
+                android:layout_width="30dp"
+                android:layout_height="35dp"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="130dp"
+                android:layout_marginBottom="11dp"
+                android:background="@drawable/journal"
+                app:layout_constraintBottom_toTopOf="@id/movie_poster_title_barrier"
+                app:layout_constraintStart_toEndOf="@id/movie_rating" />
             <ImageButton
                 android:id="@+id/watchlistBtn"
                 android:layout_width="35dp"

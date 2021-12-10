@@ -2,21 +2,19 @@ package com.moviejournal2.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.CalendarView
-import android.widget.Toast
+import android.widget.*
+import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
-import com.moviejournal2.EditJournalEntry
-import com.moviejournal2.EditProfile
-import com.moviejournal2.MOVIE_ID
-import com.moviejournal2.R
+import com.moviejournal2.*
 import com.moviejournal2.databinding.FragmentJournalBinding
-import com.moviejournal2.databinding.FragmentProfileBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,6 +45,20 @@ class JournalFragment : Fragment() {
     private lateinit var reference: DatabaseReference
     private lateinit var binding: FragmentJournalBinding
 
+    private lateinit var movie: Movie
+    private var gotMovie = false
+
+    private fun failure() {
+        Toast.makeText(context, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
+    }
+
+    private fun success(movies: List<Movie>) {
+        movie = movies[0]
+        gotMovie = true
+    }
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,29 +67,111 @@ class JournalFragment : Fragment() {
         reference = database.getReference("users")
         binding = FragmentJournalBinding.inflate(layoutInflater)
 
+        val newEntry = activity?.intent?.extras?.getString("movie")
+        if (newEntry == null) {
+            binding.newEntry.visibility = GONE
+        } else {
+            binding.newEntryText.visibility = GONE
+        }
+
 
         val calendar = CalendarView(requireContext())
+        binding.calendar.addView(calendar)
+
+        // Get database date for automatic date
+        getEntries(calendar.date)
+
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
             val c: Calendar = Calendar.getInstance()
             c.set(year,month,dayOfMonth)
             calendar.date = c.timeInMillis
+
+            // Get entries on selected date
+            getEntries(calendar.date)
         }
 
 
         // New entry button
         binding.newEntry.setOnClickListener {
-            Toast.makeText(requireContext(), SimpleDateFormat("dd/MM/yyyy").format(calendar.date), Toast.LENGTH_SHORT).show()
             val i = Intent(requireContext(), EditJournalEntry::class.java)
             i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
             i.putExtra("savedate", SimpleDateFormat("yyyy/MM/dd").format(calendar.date))
-            i.putExtra(MOVIE_ID, 370172)
+            i.putExtra("new", true)
+            if (activity?.intent?.extras?.getString("movie") != null) {
+                i.putExtra("movie", activity?.intent?.extras?.getString("movie"))
+            }
             startActivity(i)
         }
 
-        binding.calendar.addView(calendar)
         return binding.root
     }
+
+    fun getEntries(d: Long) {
+        val savedate = SimpleDateFormat("yyyy/MM/dd").format(d)
+
+        // Iterate through journal entries for that day
+        binding.entries.removeAllViews()
+        reference.child(globalVars.Companion.userID).child("journal")
+            .child(savedate).get().addOnSuccessListener {
+                if (it.exists()) {
+                    var counter = 1
+                    it.children.forEach { c->
+                        // Get movie
+                        MoviesRepository.getRequestedMovie(1, it.child(c.key.toString()).child("movie").value.toString(),
+                            ::success, ::failure)
+
+                        if (gotMovie) {
+                            val e = LinearLayout(context)
+                            e.layoutParams = binding.entry.layoutParams
+                            e.gravity = Gravity.CENTER_HORIZONTAL
+                            e.orientation = LinearLayout.VERTICAL
+
+                            val title = TextView(context)
+                            title.layoutParams = binding.title.layoutParams
+                            title.setText("Journal entry "+counter)
+                            title.textSize = 15.toFloat()
+                            e.addView(title)
+
+                            // Onclicklistener for journal entry
+                            e.setOnClickListener { a->
+                                val i = Intent(requireContext(), EditJournalEntry::class.java)
+                                i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
+                                i.putExtra("savedate", savedate)
+                                i.putExtra("new", false)
+                                i.putExtra("movie", movie.title)
+                                i.putExtra("dataid", c.key)
+                                startActivity(i)
+                            }
+
+                            val content = LinearLayout(context)
+                            content.layoutParams = binding.content.layoutParams
+                            content.gravity = Gravity.CENTER_HORIZONTAL
+
+                            val img = ImageView(context)
+                            img.layoutParams = binding.entryImg.layoutParams
+                            Glide.with(this)
+                                .load("https://image.tmdb.org/t/p/w342${movie.posterPath}")
+                                .into(img)
+                            content.addView(img)
+
+                            val text = TextView(context)
+                            text.layoutParams = binding.text.layoutParams
+                            text.setText(it.child(c.key.toString()).child("text").value.toString())
+                            content.addView(text)
+
+                            content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                            e.addView(content)
+
+                            binding.entries.addView(e)
+
+                        }
+                        counter += 1
+                    }
+                }
+            }
+    }
+
 
     companion object {
         /**
