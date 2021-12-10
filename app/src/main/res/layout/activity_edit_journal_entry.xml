@@ -42,44 +42,6 @@
 
             </com.google.android.material.navigation.NavigationView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:text="Entry date"/>
-
-            <TextView
-                android:id="@+id/date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"
-                android:text="Text"/>
-
-            <EditText
-                android:id="@+id/journalText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="40dp"
-                android:hint="Text" />
-
-    <!--        <TextView-->
-    <!--            android:layout_width="wrap_content"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_gravity="center_horizontal"-->
-    <!--            android:layout_marginTop="15dp"-->
-    <!--            android:text="Movie"/>-->
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -141,16 +103,6 @@
                     android:layout_height="wrap_content"
                     app:barrierDirection="bottom"
                     app:constraint_referenced_ids="movie_rating,movie_release_date" />
-                <TextView
-                    android:id="@+id/movie_overview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/movie_poster_title_barrier" />
                 <RatingBar
                     android:id="@+id/movie_rating"
                     style="@style/Widget.AppCompat.RatingBar.Small"
@@ -162,6 +114,38 @@
                     app:layout_constraintTop_toBottomOf="@+id/movie_poster_card" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp"
+                android:text="Entry date"/>
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="Text"/>
+
+            <EditText
+                android:id="@+id/journalText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="40dp"
+                android:hint="Text" />
+
 
             <TextView
                 android:layout_width="wrap_content"

@@ -15,11 +15,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.moviejournal2.*
 import com.moviejournal2.databinding.FragmentJournalBinding
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -48,25 +47,25 @@ class JournalFragment : Fragment() {
     private lateinit var reference: DatabaseReference
     private lateinit var binding: FragmentJournalBinding
 
-    private var movie: Movie? = null
-    private var gotMovie = false
+    private var movies: MutableList<Movie> = ArrayList()
+    private var text: MutableList<String> = ArrayList()
+    private var index: MutableList<String> = ArrayList()
 
     private fun failure() {
         Toast.makeText(context, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
     }
 
-    private fun success(movies: List<Movie>) {
-        movie = movies[0]
-        gotMovie = true
+    private fun success(m: List<Movie>) {
+        movies.add(m[0])
     }
 
-    suspend fun getMovie(s: String) = coroutineScope {
-        launch {
-            MoviesRepository.getRequestedMovie(1, s,
+
+    suspend fun getMovies(s: List<String>) = coroutineScope {
+        s.forEach {
+            MoviesRepository.getRequestedMovie(1, it,
                 ::success, ::failure)
         }
     }
-
 
 
     override fun onCreateView(
@@ -117,7 +116,7 @@ class JournalFragment : Fragment() {
                         index += 1
                     }
                 }
-                i.putExtra("id", index)
+                i.putExtra("id", index.toString())
                 i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(calendar.date))
                 i.putExtra("savedate", savedate)
                 i.putExtra("new", true)
@@ -137,62 +136,71 @@ class JournalFragment : Fragment() {
         // Iterate through journal entries for that day
         binding.entries.removeAllViews()
         reference.child(globalVars.Companion.userID).child("journal")
-            .child(savedate).get().addOnSuccessListener {
-                if (it.exists()) {
-                    var counter = 1
-                    it.children.forEach { c->
-                        // Get movie
-                        val t = it.child(c.key.toString()).child("movie").value.toString()
-                        launch {
-                            getMovie(t)
-                        }
+        .child(savedate).get().addOnSuccessListener {
+            if (it.exists()) {
+                var m: MutableList<String> = ArrayList()
 
-                        val e = LinearLayout(context)
-                        e.layoutParams = binding.entry.layoutParams
-                        e.gravity = Gravity.CENTER_HORIZONTAL
-                        e.orientation = LinearLayout.VERTICAL
+                it.children.forEach { c ->
+                    val t = it.child(c.key.toString()).child("movie").value.toString()
+                    m.add(t)
+                    text.add(it.child(c.key.toString()).child("text").value.toString())
+                    index.add(c.key.toString())
+                }
 
-                        val title = TextView(context)
-                        title.layoutParams = binding.title.layoutParams
-                        title.setText("Journal entry "+counter)
-                        title.textSize = 15.toFloat()
-                        e.addView(title)
+                GlobalScope.async {
+                    getMovies(m)
+                }
 
-                        // Onclicklistener for journal entry
-                        e.setOnClickListener { a->
-                            val i = Intent(requireContext(), EditJournalEntry::class.java)
-                            i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
-                            i.putExtra("savedate", savedate)
-                            i.putExtra("new", false)
-                            i.putExtra("movie", movie?.title)
-                            i.putExtra("id", c.key)
-                            startActivity(i)
-                        }
+                var counter = 0
 
-                        val content = LinearLayout(context)
-                        content.layoutParams = binding.content.layoutParams
-                        content.gravity = Gravity.CENTER_HORIZONTAL
+                movies.forEach { c ->
+                    val e = LinearLayout(context)
+                    e.layoutParams = binding.entry.layoutParams
+                    e.gravity = Gravity.CENTER_HORIZONTAL
+                    e.orientation = LinearLayout.VERTICAL
 
-                        val img = ImageView(context)
-                        img.layoutParams = binding.entryImg.layoutParams
-                        Glide.with(requireContext())
-                            .load("https://image.tmdb.org/t/p/w342${movie?.posterPath}")
-                            .into(img)
-                        content.addView(img)
+                    val title = TextView(context)
+                    title.layoutParams = binding.title.layoutParams
+                    title.setText("Journal entry "+(counter+1).toString())
+                    title.textSize = 15.toFloat()
+                    e.addView(title)
 
-                        val text = TextView(context)
-                        text.layoutParams = binding.text.layoutParams
-                        text.setText(it.child(c.key.toString()).child("text").value.toString())
-                        content.addView(text)
-
-                        content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
-                        e.addView(content)
-
-                        binding.entries.addView(e)
-                        counter += 1
+                    // Onclicklistener for journal entry
+                    e.setOnClickListener { a->
+                        val i = Intent(requireContext(), EditJournalEntry::class.java)
+                        i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
+                        i.putExtra("savedate", savedate)
+                        i.putExtra("new", false)
+                        i.putExtra("movie", c.title)
+                        i.putExtra("id", index[counter])
+//                            Toast.makeText(context, index.elementAt(c.id), Toast.LENGTH_SHORT).show()
+                        startActivity(i)
                     }
+
+                    val content = LinearLayout(context)
+                    content.layoutParams = binding.content.layoutParams
+                    content.gravity = Gravity.CENTER_HORIZONTAL
+
+                    val img = ImageView(context)
+                    img.layoutParams = binding.entryImg.layoutParams
+                    Glide.with(requireContext())
+                        .load("https://image.tmdb.org/t/p/w342${c.posterPath}")
+                        .into(img)
+                    content.addView(img)
+
+                    val t = TextView(context)
+                    t.layoutParams = binding.text.layoutParams
+                    t.setText(text[counter])
+                    content.addView(t)
+
+                    content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                    e.addView(content)
+
+                    binding.entries.addView(e)
+                    counter += 1
                 }
             }
+        }
     }
 
 

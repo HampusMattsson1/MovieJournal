@@ -63,7 +63,7 @@ class EditJournalEntry : AppCompatActivity() {
         binding.movieTitle.text = movies[0].title
         binding.movieRating.rating = movies[0].rating / 2
         binding.movieReleaseDate.text = movies[0].releaseDate
-        binding.movieOverview.text = movies[0].overview
+//        binding.movieOverview.text = movies[0].overview
     }
 
     private val db: AppDB by lazy{
@@ -87,7 +87,7 @@ class EditJournalEntry : AppCompatActivity() {
         val date = b?.getString("date")
         val savedate = b?.getString("savedate")
         var moviename = b?.getString("movie")
-        val dataid = b?.getInt("id")!!
+        val dataid = b?.getString("id")
         val new = b?.getBoolean("new")
 
 
@@ -116,7 +116,7 @@ class EditJournalEntry : AppCompatActivity() {
 
             // get moviename from database
             reference.child(globalVars.Companion.userID).child("journal")
-                .child(savedate).child(dataid.toString()).child("movie").get().addOnSuccessListener {
+                .child(savedate).child(dataid).child("movie").get().addOnSuccessListener {
                     if (it.value != null) {
                         moviename = it.value.toString()
                     }
@@ -130,14 +130,14 @@ class EditJournalEntry : AppCompatActivity() {
 
                 // Journal text
                 reference.child(globalVars.Companion.userID).child("journal")
-                    .child(savedate).child(dataid.toString()).child("text").get().addOnSuccessListener {
+                    .child(savedate).child(dataid).child("text").get().addOnSuccessListener {
                         if (it.value != null) {
                             binding.journalText.text = it.value.toString().toEditable()
                         }
                     }
 
                 // Journal image
-                val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
+                val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid
                 var storageRef = storage.reference.child(path+"/img.jpg")
                 storageRef.downloadUrl.addOnSuccessListener { Uri->
                     Glide.with(this)
@@ -157,7 +157,6 @@ class EditJournalEntry : AppCompatActivity() {
         // If new
         if (new != null && new == true) {
             getRequestedMovie(1, moviename!!, ::success, ::failure)
-            Toast.makeText(this, dataid.toString(), Toast.LENGTH_SHORT).show()
         }
 
 
@@ -167,15 +166,15 @@ class EditJournalEntry : AppCompatActivity() {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
 
                     // Text
-                    it2.child(dataid.toString()).child("text").ref.setValue(binding.journalText.text.toString())
+                    it2.child(dataid).child("text").ref.setValue(binding.journalText.text.toString())
 
                     // Movie id
-                    it2.child(dataid.toString()).child("movie").ref.setValue(moviename)
+                    it2.child(dataid).child("movie").ref.setValue(moviename)
 
                     var success = true
 
                     // Save picture and or recording
-                    val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid.toString()
+                    val path = "journal/" + globalVars.Companion.userID + "/" + savedate + "/" + dataid
 
                     if (uploadImg) {
                         val storageRef = storage.reference.child(path+"/img.jpg")
