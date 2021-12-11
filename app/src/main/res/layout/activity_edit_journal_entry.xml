@@ -44,7 +44,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
 
                 <ImageView
                     android:id="@+id/backdrop"
@@ -101,17 +102,7 @@
                     android:id="@+id/movie_poster_title_barrier"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="movie_rating,movie_release_date" />
-                <RatingBar
-                    android:id="@+id/movie_rating"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    app:layout_constraintEnd_toEndOf="@+id/movie_poster_card"
-                    app:layout_constraintStart_toStartOf="@+id/movie_poster_card"
-                    app:layout_constraintTop_toBottomOf="@+id/movie_poster_card" />
+                    app:barrierDirection="bottom"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -119,7 +110,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp"
                 android:text="Entry date"/>
 
             <TextView
@@ -288,6 +278,14 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Save"/>
 
+            <Button
+                android:id="@+id/delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:layout_gravity="center_horizontal"
+                android:text="Delete entry"/>
 
         </LinearLayout>
 

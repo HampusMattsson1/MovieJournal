@@ -61,9 +61,7 @@ class EditJournalEntry : AppCompatActivity() {
             .into(binding.moviePoster)
 
         binding.movieTitle.text = movies[0].title
-        binding.movieRating.rating = movies[0].rating / 2
         binding.movieReleaseDate.text = movies[0].releaseDate
-//        binding.movieOverview.text = movies[0].overview
     }
 
     private val db: AppDB by lazy{
@@ -199,6 +197,17 @@ class EditJournalEntry : AppCompatActivity() {
                     if (success) {
                         Toast.makeText(this, "Journal entry saved", Toast.LENGTH_SHORT).show()
                     }
+                }
+            }
+        }
+
+
+        // Delete button
+        binding.delete.setOnClickListener {
+            if (savedate != null && moviename != null && dataid != null) {
+                reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
+
+
                 }
             }
         }

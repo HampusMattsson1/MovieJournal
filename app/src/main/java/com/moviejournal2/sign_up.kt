@@ -77,6 +77,9 @@ class sign_up : AppCompatActivity() {
                                     reference.child(firebaseUser.uid).child("username").setValue("")
                                     reference.child(firebaseUser.uid).child("favmovie").setValue("")
                                     reference.child(firebaseUser.uid).child("genres").setValue("")
+                                    reference.child(firebaseUser.uid).child("journal").setValue("")
+                                    reference.child(firebaseUser.uid).child("friends").setValue("")
+                                    reference.child(firebaseUser.uid).child("requests").setValue("")
                                 }
                             }
 

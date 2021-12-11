@@ -60,7 +60,7 @@ class JournalFragment : Fragment() {
     }
 
 
-    suspend fun getMovies(s: List<String>) = coroutineScope {
+    fun getMovies(s: List<String>) {
         s.forEach {
             MoviesRepository.getRequestedMovie(1, it,
                 ::success, ::failure)
@@ -77,7 +77,7 @@ class JournalFragment : Fragment() {
         binding = FragmentJournalBinding.inflate(layoutInflater)
 
         val newEntry = activity?.intent?.extras?.getString("movie")
-        if (newEntry == null) {
+        if (newEntry == null || newEntry == "") {
             binding.newEntry.visibility = GONE
         } else {
             binding.newEntryText.visibility = GONE
@@ -88,7 +88,9 @@ class JournalFragment : Fragment() {
         binding.calendar.addView(calendar)
 
         // Get database date for automatic date
-        getEntries(calendar.date)
+        if (newEntry == null) {
+            getEntries(calendar.date)
+        }
 
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
@@ -97,7 +99,9 @@ class JournalFragment : Fragment() {
             calendar.date = c.timeInMillis
 
             // Get entries on selected date
-            getEntries(calendar.date)
+            if (newEntry == null) {
+                getEntries(calendar.date)
+            }
         }
 
 
@@ -123,6 +127,7 @@ class JournalFragment : Fragment() {
                 if (activity?.intent?.extras?.getString("movie") != null) {
                     i.putExtra("movie", activity?.intent?.extras?.getString("movie"))
                 }
+                requireActivity().intent!!.removeExtra("movie")
                 startActivity(i)
             }
         }
@@ -130,7 +135,7 @@ class JournalFragment : Fragment() {
         return binding.root
     }
 
-    fun getEntries(d: Long)  = runBlocking {
+    fun getEntries(d: Long) {
         val savedate = SimpleDateFormat("yyyy/MM/dd").format(d)
 
         // Iterate through journal entries for that day
@@ -147,12 +152,9 @@ class JournalFragment : Fragment() {
                     index.add(c.key.toString())
                 }
 
-                GlobalScope.async {
-                    getMovies(m)
-                }
+                getMovies(m)
 
                 var counter = 0
-
                 movies.forEach { c ->
                     val e = LinearLayout(context)
                     e.layoutParams = binding.entry.layoutParams
