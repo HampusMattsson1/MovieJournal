@@ -149,6 +149,8 @@ class EditJournalEntry : AppCompatActivity() {
                     recUri = Uri
                     setupMedia()
                 }
+
+                binding.delete.visibility = VISIBLE
             }
         }
 
@@ -206,7 +208,13 @@ class EditJournalEntry : AppCompatActivity() {
         binding.delete.setOnClickListener {
             if (savedate != null && moviename != null && dataid != null) {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
-
+                    if (it2.exists()) {
+                        it2.ref.removeValue().addOnSuccessListener {
+                            Toast.makeText(this, "Journal entry deleted", Toast.LENGTH_SHORT).show()
+                        }.addOnFailureListener {
+                            Toast.makeText(this, "Unable to delete journal entry", Toast.LENGTH_SHORT).show()
+                        }
+                    }
 
                 }
             }

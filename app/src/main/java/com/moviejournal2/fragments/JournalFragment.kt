@@ -140,6 +140,7 @@ class JournalFragment : Fragment() {
 
         // Iterate through journal entries for that day
         binding.entries.removeAllViews()
+
         reference.child(globalVars.Companion.userID).child("journal")
         .child(savedate).get().addOnSuccessListener {
             if (it.exists()) {
@@ -148,11 +149,14 @@ class JournalFragment : Fragment() {
                 it.children.forEach { c ->
                     val t = it.child(c.key.toString()).child("movie").value.toString()
                     m.add(t)
-                    text.add(it.child(c.key.toString()).child("text").value.toString())
-                    index.add(c.key.toString())
                 }
 
                 getMovies(m)
+
+                it.children.forEach { c ->
+                    text.add(it.child(c.key.toString()).child("text").value.toString())
+                    index.add(c.key.toString())
+                }
 
                 var counter = 0
                 movies.forEach { c ->
