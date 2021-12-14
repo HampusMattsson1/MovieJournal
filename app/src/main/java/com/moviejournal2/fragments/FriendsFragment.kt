@@ -297,10 +297,9 @@ class FriendsFragment : Fragment() {
                                 val l1 = d.findViewById<LinearLayout>(R.id.dialog)
                                 box.layoutParams = l1.layoutParams
 
-                                val img = ImageView(context)
-                                val l2 = d.findViewById<ImageView>(R.id.userImg)
+                                val img = CircleImageView(activity)
+                                val l2 = d.findViewById<CircleImageView>(R.id.userImg)
                                 img.layoutParams = l2.layoutParams
-                                img.setImageResource(R.drawable.profile)
 
                                 val userid = it2.child(counter.toString()).value.toString()
 

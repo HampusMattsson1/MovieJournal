@@ -57,6 +57,29 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/newEntryText"
+                android:layout_marginRight="30dp"
+                android:layout_marginLeft="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="To create a journal entry, look for a movie and then click the journal button"/>
+
+            <Button
+                android:id="@+id/newEntry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="New entry on date" />
+
+            <Button
+                android:id="@+id/showEntries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Show entries" />
+
 
             <LinearLayout
                 android:id="@+id/entries"
@@ -115,20 +138,9 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/newEntryText"
-                android:layout_marginRight="30dp"
-                android:layout_marginLeft="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="To create a journal entry, look for a movie and then click the journal button"/>
-
-            <Button
-                android:id="@+id/newEntry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:text="New entry on date" />
+                android:layout_marginTop="30dp"/>
 
         </LinearLayout>
     </ScrollView>

@@ -89,7 +89,18 @@ class JournalFragment : Fragment() {
 
         // Get database date for automatic date
         if (newEntry == null) {
-            getEntries(calendar.date)
+            GlobalScope.launch(Dispatchers.IO) {
+                val rec: suspend CoroutineScope.() -> Unit =  {
+                    withContext(Dispatchers.Main) { //Suspension functions can be called only within coroutine body
+//                        getEntries(calendar.date)
+                        movies.clear()
+                        text.clear()
+                        index.clear()
+                        getData(calendar.date)
+                    }
+                }
+                foo(this,rec)
+            }
         }
 
 
@@ -100,7 +111,29 @@ class JournalFragment : Fragment() {
 
             // Get entries on selected date
             if (newEntry == null) {
-                getEntries(calendar.date)
+                GlobalScope.launch(Dispatchers.IO) {
+                    val rec: suspend CoroutineScope.() -> Unit =  {
+                        withContext(Dispatchers.Main) {
+//                            getEntries(calendar.date)
+                            movies.clear()
+                            text.clear()
+                            index.clear()
+                            getData(calendar.date)
+                        }
+                    }
+                    foo(this,rec)
+                }
+            }
+        }
+
+        binding.showEntries.setOnClickListener {
+            GlobalScope.launch(Dispatchers.IO) {
+                val rec: suspend CoroutineScope.() -> Unit =  {
+                    withContext(Dispatchers.Main) {
+                        showData(calendar.date)
+                    }
+                }
+                foo(this,rec)
             }
         }
 
@@ -135,12 +168,92 @@ class JournalFragment : Fragment() {
         return binding.root
     }
 
-    fun getEntries(d: Long) {
+//    fun getEntries(d: Long) {
+//        val savedate = SimpleDateFormat("yyyy/MM/dd").format(d)
+//
+//        // Iterate through journal entries for that day
+//        binding.entries.removeAllViews()
+//        reference.child(globalVars.Companion.userID).child("journal")
+//        .child(savedate).get().addOnSuccessListener {
+//            if (it.exists()) {
+//                var m: MutableList<String> = ArrayList()
+//
+//                it.children.forEach { c ->
+//                    val t = it.child(c.key.toString()).child("movie").value.toString()
+//                    m.add(t)
+//                }
+//
+//                GlobalScope.launch(Dispatchers.IO) {
+//                    val rec: suspend CoroutineScope.() -> Unit =  {
+//                        withContext(Dispatchers.Main) { //Suspension functions can be called only within coroutine body
+//                            getMovies(m)
+//                        }
+//                    }
+//                    foo(this,rec)
+//                }
+//
+//
+//                it.children.forEach { c ->
+//                    text.add(it.child(c.key.toString()).child("text").value.toString())
+//                    index.add(c.key.toString())
+//                }
+//
+//                var counter = 0
+//                movies.forEach { c ->
+//                    val e = LinearLayout(context)
+//                    e.layoutParams = binding.entry.layoutParams
+//                    e.gravity = Gravity.CENTER_HORIZONTAL
+//                    e.orientation = LinearLayout.VERTICAL
+//
+//                    val title = TextView(context)
+//                    title.layoutParams = binding.title.layoutParams
+//                    title.setText("Journal entry "+(counter+1).toString())
+//                    title.textSize = 15.toFloat()
+//                    e.addView(title)
+//
+//                    // Onclicklistener for journal entry
+//                    e.setOnClickListener { a->
+//                        val i = Intent(requireContext(), EditJournalEntry::class.java)
+//                        i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
+//                        i.putExtra("savedate", savedate)
+//                        i.putExtra("new", false)
+//                        i.putExtra("movie", c.title)
+//                        i.putExtra("id", index[counter])
+////                            Toast.makeText(context, index.elementAt(c.id), Toast.LENGTH_SHORT).show()
+//                        startActivity(i)
+//                    }
+//
+//                    val content = LinearLayout(context)
+//                    content.layoutParams = binding.content.layoutParams
+//                    content.gravity = Gravity.CENTER_HORIZONTAL
+//
+//                    val img = ImageView(context)
+//                    img.layoutParams = binding.entryImg.layoutParams
+//                    Glide.with(requireContext())
+//                        .load("https://image.tmdb.org/t/p/w342${c.posterPath}")
+//                        .into(img)
+//                    content.addView(img)
+//
+//                    val t = TextView(context)
+//                    t.layoutParams = binding.text.layoutParams
+//                    t.setText(text[counter])
+//                    content.addView(t)
+//
+//                    content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+//                    e.addView(content)
+//
+//                    binding.entries.addView(e)
+//                    counter += 1
+//                }
+//            }
+//        }
+//    }
+
+    suspend fun getData(d: Long) {
         val savedate = SimpleDateFormat("yyyy/MM/dd").format(d)
 
         // Iterate through journal entries for that day
         binding.entries.removeAllViews()
-
         reference.child(globalVars.Companion.userID).child("journal")
         .child(savedate).get().addOnSuccessListener {
             if (it.exists()) {
@@ -149,64 +262,83 @@ class JournalFragment : Fragment() {
                 it.children.forEach { c ->
                     val t = it.child(c.key.toString()).child("movie").value.toString()
                     m.add(t)
-                }
-
-                getMovies(m)
-
-                it.children.forEach { c ->
                     text.add(it.child(c.key.toString()).child("text").value.toString())
                     index.add(c.key.toString())
                 }
 
-                var counter = 0
-                movies.forEach { c ->
-                    val e = LinearLayout(context)
-                    e.layoutParams = binding.entry.layoutParams
-                    e.gravity = Gravity.CENTER_HORIZONTAL
-                    e.orientation = LinearLayout.VERTICAL
-
-                    val title = TextView(context)
-                    title.layoutParams = binding.title.layoutParams
-                    title.setText("Journal entry "+(counter+1).toString())
-                    title.textSize = 15.toFloat()
-                    e.addView(title)
-
-                    // Onclicklistener for journal entry
-                    e.setOnClickListener { a->
-                        val i = Intent(requireContext(), EditJournalEntry::class.java)
-                        i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
-                        i.putExtra("savedate", savedate)
-                        i.putExtra("new", false)
-                        i.putExtra("movie", c.title)
-                        i.putExtra("id", index[counter])
-//                            Toast.makeText(context, index.elementAt(c.id), Toast.LENGTH_SHORT).show()
-                        startActivity(i)
+                GlobalScope.launch(Dispatchers.IO) {
+                    val rec: suspend CoroutineScope.() -> Unit =  {
+                        withContext(Dispatchers.Main) { //Suspension functions can be called only within coroutine body
+                            getMovies(m)
+                        }
                     }
-
-                    val content = LinearLayout(context)
-                    content.layoutParams = binding.content.layoutParams
-                    content.gravity = Gravity.CENTER_HORIZONTAL
-
-                    val img = ImageView(context)
-                    img.layoutParams = binding.entryImg.layoutParams
-                    Glide.with(requireContext())
-                        .load("https://image.tmdb.org/t/p/w342${c.posterPath}")
-                        .into(img)
-                    content.addView(img)
-
-                    val t = TextView(context)
-                    t.layoutParams = binding.text.layoutParams
-                    t.setText(text[counter])
-                    content.addView(t)
-
-                    content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
-                    e.addView(content)
-
-                    binding.entries.addView(e)
-                    counter += 1
+                    foo(this,rec)
                 }
+
             }
         }
+    }
+
+    fun showData(d: Long) {
+        val savedate = SimpleDateFormat("yyyy/MM/dd").format(d)
+
+        // Iterate through journal entries for that day
+        binding.entries.removeAllViews()
+            var counter = 0
+            movies.forEach { c ->
+                val e = LinearLayout(context)
+                e.layoutParams = binding.entry.layoutParams
+                e.gravity = Gravity.CENTER_HORIZONTAL
+                e.orientation = LinearLayout.VERTICAL
+
+                val title = TextView(context)
+                title.layoutParams = binding.title.layoutParams
+                title.setText("Journal entry "+(counter+1).toString())
+                title.textSize = 15.toFloat()
+                e.addView(title)
+
+                // Onclicklistener for journal entry
+                e.setOnClickListener { a->
+                    val i = Intent(requireContext(), EditJournalEntry::class.java)
+                    i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
+                    i.putExtra("savedate", savedate)
+                    i.putExtra("new", false)
+                    i.putExtra("movie", c.title)
+                    i.putExtra("id", index[counter])
+//                            Toast.makeText(context, index.elementAt(c.id), Toast.LENGTH_SHORT).show()
+                    startActivity(i)
+                }
+
+                val content = LinearLayout(context)
+                content.layoutParams = binding.content.layoutParams
+                content.gravity = Gravity.CENTER_HORIZONTAL
+
+                val img = ImageView(context)
+                img.layoutParams = binding.entryImg.layoutParams
+                Glide.with(requireContext())
+                    .load("https://image.tmdb.org/t/p/w342${c.posterPath}")
+                    .into(img)
+                content.addView(img)
+
+                val t = TextView(context)
+                t.layoutParams = binding.text.layoutParams
+                t.setText(text[counter])
+                content.addView(t)
+
+                content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))
+                e.addView(content)
+
+                binding.entries.addView(e)
+                counter += 1
+            }
+        }
+
+
+
+
+
+    private suspend fun foo( coroutineScope: CoroutineScope , lambda : suspend CoroutineScope.() -> Unit)  {
+        lambda.invoke(coroutineScope)
     }
 
 

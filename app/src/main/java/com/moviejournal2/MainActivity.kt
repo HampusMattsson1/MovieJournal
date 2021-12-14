@@ -97,22 +97,34 @@ open class MainActivity : AppCompatActivity() {
         // Friend request notifications
         reference.get().addOnSuccessListener {
             if (it.exists() && it.childrenCount > 0) {
-                it.children.forEach { c ->
-                    database.getReference("users/"+c.value.toString()+"/username").get()
-                        .addOnSuccessListener { it2->
-                        var builder = NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.profile)
-                            .setContentTitle("Friend request")
-                            .setContentText(it2.value.toString()+" wants to be your friend!")
-                            .setStyle(NotificationCompat.BigTextStyle()
-                                .bigText("Much longer text that cannot fit one line..."))
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                it.children.forEach { c ->
+//                    database.getReference("users/"+c.value.toString()+"/username").get()
+//                        .addOnSuccessListener { it2->
+//                        var builder = NotificationCompat.Builder(this)
+//                            .setSmallIcon(R.drawable.profile)
+//                            .setContentTitle("Friend request")
+//                            .setContentText(it2.value.toString()+" wants to be your friend!")
+//                            .setStyle(NotificationCompat.BigTextStyle()
+//                                .bigText("Much longer text that cannot fit one line..."))
+//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//
+//                        with(NotificationManagerCompat.from(this)) {
+//                            notify(c.key!!.toInt(), builder.build())
+//                        }
+//                    }
+//                }
 
-                        with(NotificationManagerCompat.from(this)) {
-                            notify(c.key!!.toInt(), builder.build())
-                        }
+                    var builder = NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.profile)
+                        .setContentTitle("Friend request")
+                        .setContentText(it.childrenCount.toString()+" people want to be friends with you")
+                        .setStyle(NotificationCompat.BigTextStyle()
+                            .bigText(it.childrenCount.toString()+" people want to be friends with you"))
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+                    with(NotificationManagerCompat.from(this)) {
+                        notify(0, builder.build())
                     }
-                }
             }
         }
 
