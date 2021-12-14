@@ -262,7 +262,7 @@ class JournalFragment : Fragment() {
                 it.children.forEach { c ->
                     val t = it.child(c.key.toString()).child("movie").value.toString()
                     m.add(t)
-                    text.add(it.child(c.key.toString()).child("text").value.toString())
+                    text.add(it.child(c.key.toString()).child("quote").value.toString())
                     index.add(c.key.toString())
                 }
 
@@ -285,7 +285,7 @@ class JournalFragment : Fragment() {
         // Iterate through journal entries for that day
         binding.entries.removeAllViews()
             var counter = 0
-            movies.forEach { c ->
+            movies.zip(index).forEach { pair ->
                 val e = LinearLayout(context)
                 e.layoutParams = binding.entry.layoutParams
                 e.gravity = Gravity.CENTER_HORIZONTAL
@@ -303,8 +303,8 @@ class JournalFragment : Fragment() {
                     i.putExtra("date", SimpleDateFormat("dd/MM/yyyy").format(d))
                     i.putExtra("savedate", savedate)
                     i.putExtra("new", false)
-                    i.putExtra("movie", c.title)
-                    i.putExtra("id", index[counter])
+                    i.putExtra("movie", pair.component1().title)
+                    i.putExtra("id", pair.component2())
 //                            Toast.makeText(context, index.elementAt(c.id), Toast.LENGTH_SHORT).show()
                     startActivity(i)
                 }
@@ -316,13 +316,17 @@ class JournalFragment : Fragment() {
                 val img = ImageView(context)
                 img.layoutParams = binding.entryImg.layoutParams
                 Glide.with(requireContext())
-                    .load("https://image.tmdb.org/t/p/w342${c.posterPath}")
+                    .load("https://image.tmdb.org/t/p/w342${pair.component1().posterPath}")
                     .into(img)
                 content.addView(img)
 
                 val t = TextView(context)
                 t.layoutParams = binding.text.layoutParams
-                t.setText(text[counter])
+                if (text[counter] != "null") {
+                    t.setText(text[counter])
+                } else {
+                    t.setText(" ")
+                }
                 content.addView(t)
 
                 content.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.grey))

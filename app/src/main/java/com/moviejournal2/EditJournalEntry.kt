@@ -126,11 +126,19 @@ class EditJournalEntry : AppCompatActivity() {
 //             Set movie from name
                 getRequestedMovie(1, moviename!!, ::success, ::failure)
 
+                // Journal quote
+                reference.child(globalVars.Companion.userID).child("journal")
+                    .child(savedate).child(dataid).child("quote").get().addOnSuccessListener {
+                        if (it.value != null) {
+                            binding.journalQuote.text = it.value.toString().toEditable()
+                        }
+                    }
+
                 // Journal text
                 reference.child(globalVars.Companion.userID).child("journal")
                     .child(savedate).child(dataid).child("text").get().addOnSuccessListener {
                         if (it.value != null) {
-                            binding.journalText.text = it.value.toString().toEditable()
+                            binding.journalReview.text = it.value.toString().toEditable()
                         }
                     }
 
@@ -165,8 +173,11 @@ class EditJournalEntry : AppCompatActivity() {
             if (savedate != null && moviename != null && dataid != null) {
                 reference.child(globalVars.Companion.userID).child("journal").child(savedate).get().addOnSuccessListener { it2 ->
 
+                    // Quote
+                    it2.child(dataid).child("quote").ref.setValue(binding.journalQuote.text.toString())
+
                     // Text
-                    it2.child(dataid).child("text").ref.setValue(binding.journalText.text.toString())
+                    it2.child(dataid).child("text").ref.setValue(binding.journalReview.text.toString())
 
                     // Movie id
                     it2.child(dataid).child("movie").ref.setValue(moviename)

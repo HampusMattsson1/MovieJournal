@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.databinding.ActivityEditProfileBinding
-import com.moviejournal2.fragments.EditProfileFragment
 import java.io.ByteArrayOutputStream
 
 class EditProfile : AppCompatActivity() {

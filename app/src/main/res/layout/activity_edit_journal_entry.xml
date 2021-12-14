@@ -126,21 +126,22 @@
                 android:text="Favourite quote"/>
 
             <EditText
-                android:id="@+id/journalText"
+                android:id="@+id/journalQuote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="40dp"
+                android:textStyle="italic"
                 android:hint="Write your favourite quote" />
 
-            <!--<TextView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
-                android:text="Review"/>
+                android:text="Movie thoughts"/>
 
             <EditText
                 android:id="@+id/journalReview"
@@ -150,7 +151,7 @@
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="40dp"
-                android:hint="Write a review" />-->
+                android:hint="Write a review" />
 
             <TextView
                 android:layout_width="wrap_content"
