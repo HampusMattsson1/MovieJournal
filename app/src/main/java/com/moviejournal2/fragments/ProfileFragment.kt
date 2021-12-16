@@ -1,17 +1,25 @@
 package com.moviejournal2.fragments
 
 import android.content.Intent
+import android.os.AsyncTask
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.bumptech.glide.Glide
+import com.google.android.gms.tasks.Tasks.await
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.database.DataSnapshot
@@ -20,6 +28,15 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.moviejournal2.*
 import com.moviejournal2.databinding.FragmentProfileBinding
+import kotlinx.coroutines.*
+import kotlinx.coroutines.GlobalScope.coroutineContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.lang.Exception
+import java.util.concurrent.CompletableFuture.runAsync
+import kotlin.Result.Companion.failure
+import kotlin.coroutines.coroutineContext
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -64,7 +81,35 @@ class ProfileFragment : Fragment() {
         ).allowMainThreadQueries().build()
     }
 
+    private suspend fun foo( coroutineScope: CoroutineScope , lambda : suspend CoroutineScope.() -> Unit)  {
+        lambda.invoke(coroutineScope)
+    }
 
+    suspend fun setMovie(s: String) {
+        var m: Movie? = null
+        coroutineScope {
+            m = MoviesRepository.getRequestedMovie2(1, s)
+        }
+
+        if (m == null) {
+            binding.favmovie.setImageDrawable(R.drawable.profile.toDrawable())
+        } else {
+            Glide.with(requireContext())
+                .load("https://image.tmdb.org/t/p/w342${m!!.posterPath}")
+                .into(binding.favmovie)
+        }
+    }
+
+    fun setFavMovie(m: String?) {
+        if (m != null) {
+            Glide.with(requireContext())
+            .load("https://image.tmdb.org/t/p/w342${m}")
+            .into(binding.favmovie)
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,7 +139,11 @@ class ProfileFragment : Fragment() {
         reference.child(globalVars.Companion.userID).get().addOnSuccessListener {
             if (it.exists()) {
                 binding.user.text = it.child("username").value.toString()
-                binding.favmovie.text = it.child("favmovie").value.toString().toEditable()
+
+                // Favourite movie
+                Glide.with(requireContext())
+                    .load("https://image.tmdb.org/t/p/w342/${it.child("favmovie").value.toString()}")
+                    .into(binding.favmovie)
 
                 // Chips
                 reference.child(globalVars.Companion.userID).child("genres").get().addOnSuccessListener { it2: DataSnapshot ->
@@ -123,7 +172,6 @@ class ProfileFragment : Fragment() {
                         }
                     }
                 }
-
             }
         }
 

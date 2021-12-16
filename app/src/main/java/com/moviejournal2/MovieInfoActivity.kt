@@ -50,6 +50,7 @@ class MovieInfoActivity : AppCompatActivity() {
     private lateinit var watchlistButton: ImageButton
     private lateinit var likeButton: ImageButton
     private lateinit var journalButton: ImageButton
+    private lateinit var favMovieButton: ImageButton
 
     private val db: AppDB by lazy{
         Room.databaseBuilder(
@@ -91,7 +92,7 @@ class MovieInfoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie_info)
 
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
-        reference = database.getReference("users")
+        reference = database.getReference("users/"+globalVars.Companion.userID)
 
         backdrop = findViewById(R.id.backdrop)
         poster = findViewById(R.id.movie_poster)
@@ -104,6 +105,7 @@ class MovieInfoActivity : AppCompatActivity() {
         watchlistButton = findViewById(R.id.watchlistBtn)
         likeButton = findViewById(R.id.likeBtn)
         journalButton = findViewById(R.id.journalBtn)
+        favMovieButton = findViewById(R.id.favBtn)
 
         if(extras != null){
             id = extras.getInt(MOVIE_ID, 0)
@@ -182,6 +184,16 @@ class MovieInfoActivity : AppCompatActivity() {
                 startActivity(i)
             }
         }
+
+        favMovieButton.setOnClickListener{
+            if (moviePoster != "") {
+                reference.child("favmovie").get().addOnSuccessListener {
+                    it.ref.setValue(moviePoster)
+                    Toast.makeText(this, "Movie set as favourite", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
     }
 
     private fun fillDetails(extras: Bundle){

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.bumptech.glide.Glide
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -46,7 +47,9 @@ class ViewFriend : AppCompatActivity() {
             reference.child(id).get().addOnSuccessListener {
                 if (it.exists()) {
                     binding.user.text = it.child("username").value.toString()
-                    binding.favmovie.text = it.child("favmovie").value.toString().toEditable()
+                    Glide.with(this)
+                        .load("https://image.tmdb.org/t/p/w342/${it.child("favmovie").value.toString()}")
+                        .into(binding.favmovie)
 
                     // Get image
                     val path = "images/" + id + ".jpg"

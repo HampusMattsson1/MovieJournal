@@ -1,6 +1,7 @@
 package com.moviejournal2
 
 import android.util.Log
+import android.widget.Toast
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -10,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object MoviesRepository {
-    private val api: Api
+    val api: Api
 
     init {
         //create okhttp client for logging
@@ -150,6 +151,34 @@ object MoviesRepository {
                     onError.invoke()
                 }
             })
+    }
+
+
+    fun getRequestedMovie2(
+        page: Int = 1,
+        name: String
+    ): Movie? {
+        var ret: Movie? = null
+        api.getRequestedMovie(page = page, name = name)
+            .enqueue(object : Callback<GetMoviesResponse> {
+                override fun onResponse(
+                    call: Call<GetMoviesResponse>,
+                    response: Response<GetMoviesResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+
+                        if (responseBody != null) {
+                            ret = responseBody.movies[0]
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<GetMoviesResponse>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
+        return ret
     }
 
 

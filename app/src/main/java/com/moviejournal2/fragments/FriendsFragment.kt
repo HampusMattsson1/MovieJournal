@@ -135,135 +135,132 @@ class FriendsFragment : Fragment() {
             reference.get().addOnSuccessListener {
                 if (it.exists()) {
                     reference.child(globalVars.Companion.userID).child("friends").get().addOnSuccessListener { it2 ->
-                        if (it2.exists()) {
 //                            var view: LinearLayout = binding.friends
-                            val me = it.child(globalVars.Companion.userID.toString()).child("username").value.toString()
+                        val me = it.child(globalVars.Companion.userID.toString()).child("username").value.toString()
 
-                            // Loop through all users
-                            it.children.forEach { u: DataSnapshot ->
-                                val res = u.child("username").value.toString()
-                                if (res == binding.userSearch.text.toString() &&
-                                    res != me
-                                ) {
-                                    // Loop through user's friends
-                                    var friend = false
-                                    it2.children.forEach { f: DataSnapshot ->
-                                        if (it.child(f.value.toString()).child("username").value.toString() == binding.userSearch.text.toString()) {
-                                            friend = true
-                                        }
-                                    }
-                                    results.add(res)
-                                    resultsRef.add(u.key.toString())
-                                    if (friend) {
-                                        resultsIsfriend.add(1)
-                                    } else {
-                                        resultsIsfriend.add(0)
+                        // Loop through all users
+                        it.children.forEach { u: DataSnapshot ->
+                            val res = u.child("username").value.toString()
+                            if (res == binding.userSearch.text.toString() &&
+                                res != me
+                            ) {
+                                // Loop through user's friends
+                                var friend = false
+                                it2.children.forEach { f: DataSnapshot ->
+                                    if (it.child(f.value.toString()).child("username").value.toString() == binding.userSearch.text.toString()) {
+                                        friend = true
                                     }
                                 }
+                                results.add(res)
+                                resultsRef.add(u.key.toString())
+                                if (friend) {
+                                    resultsIsfriend.add(1)
+                                } else {
+                                    resultsIsfriend.add(0)
+                                }
                             }
+                        }
 
-                            if (results.isEmpty()) {
-                                Toast.makeText(activity, "No users found", Toast.LENGTH_SHORT).show()
-                            } else {
-                                // Dialog popup initialization
-                                var d: Dialog = Dialog(requireContext())
-                                d.setTitle("Search results")
-                                d.setContentView(R.layout.template_search)
+                        if (results.isEmpty()) {
+                            Toast.makeText(activity, "No users found", Toast.LENGTH_SHORT).show()
+                        } else {
+                            // Dialog popup initialization
+                            var d: Dialog = Dialog(requireContext())
+                            d.setTitle("Search results")
+                            d.setContentView(R.layout.template_search)
 
-                                var view = d.findViewById<LinearLayout>(R.id.dialog)
-                                var counter = 0
+                            var view = d.findViewById<LinearLayout>(R.id.dialog)
+                            var counter = 0
 
-                                // Loop through search results
-                                results.forEach { r: String ->
-                                    val box = LinearLayout(context)
-                                    val l1 = d.findViewById<LinearLayout>(R.id.dialog)
-                                    box.layoutParams = l1.layoutParams
+                            // Loop through search results
+                            results.forEach { r: String ->
+                                val box = LinearLayout(context)
+                                val l1 = d.findViewById<LinearLayout>(R.id.dialog)
+                                box.layoutParams = l1.layoutParams
 
-                                    val img = ImageView(context)
-                                    val l2 = d.findViewById<ImageView>(R.id.userImg)
+                                val img = ImageView(context)
+                                val l2 = d.findViewById<ImageView>(R.id.userImg)
 //                                    val img = CircleImageView(context)
 //                                    val l2 = d.findViewById<CircleImageView>(R.id.userImg)
-                                    img.layoutParams = l2.layoutParams
+                                img.layoutParams = l2.layoutParams
 
-                                    val userid = resultsRef[counter]
+                                val userid = resultsRef[counter]
 
-                                    val path = "images/" + userid + ".jpg"
-                                    val storageRef = storage.reference.child(path)
-                                    storageRef.downloadUrl.addOnSuccessListener { Uri->
-                                        Glide.with(this)
-                                            .load(Uri.toString())
-                                            .into(img)
-                                    }.addOnFailureListener { Uri->
-                                        img.setImageResource(R.drawable.profile)
+                                val path = "images/" + userid + ".jpg"
+                                val storageRef = storage.reference.child(path)
+                                storageRef.downloadUrl.addOnSuccessListener { Uri->
+                                    Glide.with(this)
+                                        .load(Uri.toString())
+                                        .into(img)
+                                }.addOnFailureListener { Uri->
+                                    img.setImageResource(R.drawable.profile)
+                                }
+                                box.addView(img)
+
+                                val username = TextView(context)
+                                val l3 = d.findViewById<TextView>(R.id.userText)
+                                username.layoutParams = l3.layoutParams
+                                username.setText(r)
+                                box.addView(username)
+
+                                val add = ImageView(context)
+                                val l4 = d.findViewById<ImageView>(R.id.userAdd)
+                                add.layoutParams = l4.layoutParams
+
+                                if (resultsIsfriend[counter] == 1) {
+                                    add.setImageResource(R.drawable.done)
+                                } else {
+                                    add.setImageResource(R.drawable.add)
+                                }
+
+                                // Add button listener
+                                add.setOnClickListener { a ->
+                                    // Check if friend request is already sent
+                                    var alreadySent = false
+
+                                    var counter = 0
+                                    while (counter < it.child(userid).child("requests").childrenCount) {
+                                        val id = it.child(userid).child("requests").child(counter.toString()).value.toString()
+                                        if (id == globalVars.Companion.userID) {
+                                            alreadySent = true
+                                            add.setImageResource(R.drawable.done)
+                                            break
+                                        }
+                                        counter += 1
                                     }
-                                    box.addView(img)
 
-                                    val username = TextView(context)
-                                    val l3 = d.findViewById<TextView>(R.id.userText)
-                                    username.layoutParams = l3.layoutParams
-                                    username.setText(r)
-                                    box.addView(username)
-
-                                    val add = ImageView(context)
-                                    val l4 = d.findViewById<ImageView>(R.id.userAdd)
-                                    add.layoutParams = l4.layoutParams
-
-                                    if (resultsIsfriend[counter] == 1) {
-                                        add.setImageResource(R.drawable.done)
-                                    } else {
-                                        add.setImageResource(R.drawable.add)
-                                    }
-
-                                    // Add button listener
-                                    add.setOnClickListener { a ->
-                                        // Check if friend request is already sent
-                                        var alreadySent = false
-
-                                        var counter = 0
-                                        while (counter < it.child(userid).child("requests").childrenCount) {
-                                            val id = it.child(userid).child("requests").child(counter.toString()).value.toString()
-                                            if (id == globalVars.Companion.userID) {
-                                                alreadySent = true
-                                                add.setImageResource(R.drawable.done)
+                                    if (alreadySent == false) {
+                                        var index = 0
+                                        while (index < it.child(userid).child("requests").childrenCount) {
+                                            if (it.child(userid).child("requests").child(index.toString()).value == null) {
                                                 break
                                             }
-                                            counter += 1
+                                            index += 1
                                         }
+                                        reference.child(userid).child("requests").child(index.toString()).setValue(globalVars.Companion.userID)
 
-                                        if (alreadySent == false) {
-                                            var index = 0
-                                            while (index < it.child(userid).child("requests").childrenCount) {
-                                                if (it.child(userid).child("requests").child(index.toString()).value == null) {
-                                                    break
-                                                }
-                                                index += 1
-                                            }
-                                            reference.child(userid).child("requests").child(index.toString()).setValue(globalVars.Companion.userID)
-
-                                            val output = "Friend request sent to " + r
-                                            Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
-                                            add.setImageResource(R.drawable.done)
-                                        } else {
-                                            val output = "Friend request already sent to  " + r
-                                            Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
-                                        }
+                                        val output = "Friend request sent to " + r
+                                        Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
+                                        add.setImageResource(R.drawable.done)
+                                    } else {
+                                        val output = "Friend request already sent to  " + r
+                                        Toast.makeText(activity, output, Toast.LENGTH_SHORT).show()
                                     }
-
-                                    box.addView(add)
-
-                                    view.addView(box)
-                                    counter += 1
                                 }
 
-                                // Close button onclick
-                                d.findViewById<TextView>(R.id.closeDialog).setOnClickListener { c ->
-                                    d.dismiss()
-                                }
+                                box.addView(add)
 
-                                // Show dialog
-                                d.show()
+                                view.addView(box)
+                                counter += 1
                             }
 
+                            // Close button onclick
+                            d.findViewById<TextView>(R.id.closeDialog).setOnClickListener { c ->
+                                d.dismiss()
+                            }
+
+                            // Show dialog
+                            d.show()
                         }
                     }
                 }

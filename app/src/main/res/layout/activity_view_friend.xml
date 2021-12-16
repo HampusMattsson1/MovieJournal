@@ -91,17 +91,12 @@
                     android:layout_gravity="center_horizontal"
                     android:text="Favourite movie" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/favmovie"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="20dp"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:text="Favourite movie" />
+                    android:layout_width="120dp"
+                    android:layout_height="180dp"/>
 
                 <TextView
                     android:id="@+id/textView7"
@@ -138,6 +133,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
+                    android:layout_marginBottom="20dp"
                     android:layout_gravity="center_horizontal"
                     android:id="@+id/unfriend"
                     android:text="Unfriend"/>
