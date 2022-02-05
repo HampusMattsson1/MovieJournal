@@ -23,30 +23,22 @@ import org.junit.Rule
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
-    @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.moviejournal2", appContext.packageName)
-    }
+class UITests {
 
     @get:Rule var a : ActivityScenarioRule<sign_in> = ActivityScenarioRule(sign_in::class.java)
 
 
-    // Journal test
+    // Login tests
     @Test
-    fun newJournalEntry() {
-        // Login
+    fun loginWithoutCredentials() {
+        onView(withId(R.id.btn_login)).perform(click())
+    }
+
+    @Test
+    fun loginTest1() {
         onView(withId(R.id.login_textEditEmail)).perform(replaceText("hjm@ownit.nu"))
         onView(withId(R.id.login_textEditPassword)).perform(replaceText("hamt19"))
         onView(withId(R.id.btn_login)).perform(click())
-
-//        onView(withId(R.id.ic_journal)).perform(click())
-
-        // Select movie
-
-
     }
 
 
