@@ -115,9 +115,6 @@ class UITests {
 //        onView(withId(R.id.ic_journal)).perform(click())
 
 //        onView(withText("Your watchlist")).check(matches(isDisplayed()))
-
-
-
     }
 
 

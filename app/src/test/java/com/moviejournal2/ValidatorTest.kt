@@ -25,6 +25,7 @@ class UnitTestMoviesAdapter {
         123,"TestTitle","TestOverview","TestPath",
         "TestBackdrop", 0.5, "2021/05/30")
 
+    // Temp function used to initialize the MoviesAdapter
     fun temp(m:Movie): Unit {
         Log.d("test", "test")
     }
@@ -33,9 +34,10 @@ class UnitTestMoviesAdapter {
     fun initMoviesAdapter() {
 
         // Create array
-        val movieList: MutableList<Movie> = ArrayList()
+//        val movieList: MutableList<Movie> = ArrayList()
 //        movieList.add(0, movie)
 
+        // No movies should be inside the MoviesAdapter
         Assertions.assertThat(ma.itemCount).isEqualTo(0)
     }
 
