@@ -126,6 +126,7 @@ class UITests {
         onView(withId(R.id.userSearch)).perform(replaceText("batman"))
         onView(withId(R.id.searchButton)).perform(click())
         Thread.sleep(2000)
+        onView(withText("batman")).check(matches(isDisplayed()))
     }
 
     @Test
@@ -142,6 +143,10 @@ class UITests {
         Thread.sleep(3000)
         onView(withId(R.id.save)).perform(click())
         Thread.sleep(5000)
+
+        Espresso.pressBack()
+        Thread.sleep(2000)
+        onView(withText("UITest")).check(matches(isDisplayed()))
     }
 
 }
