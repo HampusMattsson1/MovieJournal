@@ -177,7 +177,6 @@ class MoviesFragment : Fragment() {
     private fun showMovieDetails(movie: Movie){
         val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
         intent.putExtra(MOVIE_ID, movie.id)
-        Log.i("showMovieDetails","${movie.id}")
         intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
         intent.putExtra(MOVIE_POSTER, movie.posterPath)
         intent.putExtra(MOVIE_TITLE, movie.title)
@@ -190,7 +189,6 @@ class MoviesFragment : Fragment() {
     private fun showMovieDetailsWatchlist(item: WatchList){
         val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
         intent.putExtra(MOVIE_ID, item.id)
-        Log.i("showMovieDetails","${item.id}")
         intent.putExtra(MOVIE_BACKDROP, item.backdropPath)
         intent.putExtra(MOVIE_POSTER, item.posterPath)
         intent.putExtra(MOVIE_TITLE, item.title)

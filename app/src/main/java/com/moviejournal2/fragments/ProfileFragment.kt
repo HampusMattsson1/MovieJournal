@@ -189,7 +189,6 @@ class ProfileFragment : Fragment() {
     private fun showMovieDetailsLikedlist(item: LikedList){
         val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
         intent.putExtra(MOVIE_ID, item.id)
-        Log.i("showMovieDetails","${item.id}")
         intent.putExtra(MOVIE_BACKDROP, item.backdropPath)
         intent.putExtra(MOVIE_POSTER, item.posterPath)
         intent.putExtra(MOVIE_TITLE, item.title)

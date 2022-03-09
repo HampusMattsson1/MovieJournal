@@ -33,9 +33,6 @@ import java.util.*
 import kotlin.random.Random
 import android.R.id
 
-
-
-
 open class MainActivity : AppCompatActivity() {
     private val journalFragment = JournalFragment()
     private val friendsFragment = FriendsFragment()
@@ -62,15 +59,8 @@ open class MainActivity : AppCompatActivity() {
                 }
             }
 
-
-
-
-
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -103,12 +93,10 @@ open class MainActivity : AppCompatActivity() {
             //Create an alarm manager
             val mAlarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-            //Create the time of day you would like it to go off. Use a calendar
             val calendar: Calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, 20)
-            calendar.set(Calendar.MINUTE, 40)
+            calendar.set(Calendar.HOUR_OF_DAY, 14)
+            calendar.set(Calendar.MINUTE, 15)
 
-            //Create an intent that points to the receiver. The system will notify the app about the current time, and send a broadcast to the app
             val intent = Intent(this, AlarmReceiver::class.java)
             val pendingIntent: PendingIntent = PendingIntent.getBroadcast(
                 this,
@@ -117,9 +105,6 @@ open class MainActivity : AppCompatActivity() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-            //initialize the alarm by using inexactrepeating. This allows the system to scheduler your alarm at the most efficient time around your
-            //set time, it is usually a few seconds off your requested time.
-            // you can also use setExact however this is not recommended. Use this only if it must be done then.
 
             //Also set the interval using the AlarmManager constants
             mAlarmManager.setInexactRepeating(
@@ -132,27 +117,6 @@ open class MainActivity : AppCompatActivity() {
 
         createAlarm()
 
-
-
-        /*
-        val userId = intent.getStringExtra("user_id")
-        val emailId = intent.getStringExtra("email_id")
-
-        val mtv_user_id = findViewById<TextView>(R.id.tv_user_id)
-        val mtv_email_id = findViewById<TextView>(R.id.tv_email_id)
-        mtv_user_id.text = "User ID :: $userId"
-        mtv_email_id.text = "Email ID :: $emailId"
-        */
-
-        //Logout button
-        /*
-        val mbtn_logout = findViewById<Button>(R.id.btn_logout)
-        mbtn_logout.setOnClickListener{
-            FirebaseAuth.getInstance().signOut()
-            startActivity(Intent(this@MainActivity, sign_up::class.java))
-            finish()
-        }
-        */
 
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
         reference = database.getReference("users/" + globalVars.Companion.userID + "/requests")
@@ -199,12 +163,7 @@ open class MainActivity : AppCompatActivity() {
                 intent.apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
-                /*var intent = Intent(this, MovieInfoActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                }*/
 
-                /*var movieNotifAdapter = MoviesAdapter(mutableListOf()) { movie -> intent =
-                    showMovieDetails(movie)}*/
 
 
                 val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
@@ -262,22 +221,6 @@ open class MainActivity : AppCompatActivity() {
                 // Friend request notifications
         reference.get().addOnSuccessListener {
             if (it.exists() && it.childrenCount > 0) {
-//                it.children.forEach { c ->
-//                    database.getReference("users/"+c.value.toString()+"/username").get()
-//                        .addOnSuccessListener { it2->
-//                        var builder = NotificationCompat.Builder(this)
-//                            .setSmallIcon(R.drawable.profile)
-//                            .setContentTitle("Friend request")
-//                            .setContentText(it2.value.toString()+" wants to be your friend!")
-//                            .setStyle(NotificationCompat.BigTextStyle()
-//                                .bigText("Much longer text that cannot fit one line..."))
-//                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//
-//                        with(NotificationManagerCompat.from(this)) {
-//                            notify(c.key!!.toInt(), builder.build())
-//                        }
-//                    }
-//                }
 
                     var builder = NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.profile)
@@ -293,17 +236,6 @@ open class MainActivity : AppCompatActivity() {
             }
         }
 
-//        var builder = NotificationCompat.Builder(this)
-//            .setSmallIcon(R.drawable.profile)
-//            .setContentTitle("Friend request")
-//            .setContentText("Much longer text that cannot fit one line...")
-//            .setStyle(NotificationCompat.BigTextStyle()
-//                .bigText("Much longer text that cannot fit one line..."))
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//
-//        with(NotificationManagerCompat.from(this)) {
-//            notify(12345, builder.build())
-//        }
 
     }
 
@@ -311,11 +243,6 @@ open class MainActivity : AppCompatActivity() {
         Log.d("MoviesFragment", "Movies: $movies")
     }
 
-    /*
-    private fun onError(){
-        Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
-    }
-    */
 
     open fun replaceFragment(fragment: Fragment){
         if(fragment != null) {
@@ -326,15 +253,6 @@ open class MainActivity : AppCompatActivity() {
     }
 }
 
-//class changeFragment : MainActivity() {
-//    fun replaceFragment(fragment: Fragment){
-//        if(fragment !=null) {
-//            val transaction = supportFragmentManager.beginTransaction()
-//            transaction.replace(R.id.fragment_container, fragment)
-//            transaction.commit()
-//        }
-//    }
-//}
 
 
 class globalVars : Application() {
