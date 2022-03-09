@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.moviejournal2.Movie
 import com.moviejournal2.R
+import okhttp3.Interceptor.Companion.invoke
 
 class MoviesAdapter(
     //The list of movies is dynamic, new movies can be added

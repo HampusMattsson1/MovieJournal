@@ -23,4 +23,6 @@
     <string name="movie_title" />
     <string name="recommended_movies">Recommended movies :</string>
     <string name="Your_watchlist">Your watchlist</string>
+    <string name="channel_name">\"notif_channel\"</string>
+    <string name="channel_description">\"Channel for notifications\"</string>
 </resources>

@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.*
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -14,9 +13,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.moviejournal2.MoviesRepository.getRecommendedMovies
-import com.moviejournal2.fragments.JournalFragment
-import java.text.SimpleDateFormat
 
 const val MOVIE_ID = "extra_movie_id"
 const val MOVIE_BACKDROP = "extra_movie_backdrop"
@@ -214,6 +210,7 @@ class MovieInfoActivity : AppCompatActivity() {
         movieBackdrop = extras.getString(MOVIE_BACKDROP, "")
         moviePoster = extras.getString(MOVIE_POSTER, "")
         movieTitle = extras.getString(MOVIE_TITLE, "")
+        Log.d("sard", movieTitle)
         movieRating = extras.getFloat(MOVIE_RATING, 0f)
         movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
         movieOverview = extras.getString(MOVIE_OVERVIEW, "")
@@ -279,7 +276,6 @@ class MovieInfoActivity : AppCompatActivity() {
         intent.putExtra(MOVIE_OVERVIEW, movie.overview)
         startActivity(intent)
     }
-
 
 
 }
