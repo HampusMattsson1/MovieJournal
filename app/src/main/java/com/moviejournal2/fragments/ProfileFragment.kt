@@ -155,8 +155,8 @@ class ProfileFragment : Fragment() {
                         while (counter < 20) {
                             if (it2.child(counter.toString()).value != null) {
                                 var chip = Chip(context)
-                                chip.setCheckable(false)
-                                chip.setText(it2.child(counter.toString()).child("title").value.toString())
+                                chip.isCheckable = false
+                                chip.text = it2.child(counter.toString()).child("title").value.toString()
                                 view.addView(chip)
                             }
                             counter += 1

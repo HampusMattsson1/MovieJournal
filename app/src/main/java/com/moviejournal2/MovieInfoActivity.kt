@@ -105,7 +105,6 @@ class MovieInfoActivity : AppCompatActivity() {
 
         if(extras != null){
             id = extras.getInt(MOVIE_ID, 0)
-            Log.i("MovieInfoActivity", "$id")
             fillDetails(extras)
 
         }else{
@@ -210,7 +209,6 @@ class MovieInfoActivity : AppCompatActivity() {
         movieBackdrop = extras.getString(MOVIE_BACKDROP, "")
         moviePoster = extras.getString(MOVIE_POSTER, "")
         movieTitle = extras.getString(MOVIE_TITLE, "")
-        Log.d("sard", movieTitle)
         movieRating = extras.getFloat(MOVIE_RATING, 0f)
         movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE, "")
         movieOverview = extras.getString(MOVIE_OVERVIEW, "")
@@ -230,7 +228,6 @@ class MovieInfoActivity : AppCompatActivity() {
     }
 
     private fun getRecommendedMovies() {
-        Log.i("getRecommendedMovies", "$id")
         MoviesRepository.getRecommendedMovies(
             id,
             recommendedMoviesPage,
@@ -257,7 +254,6 @@ class MovieInfoActivity : AppCompatActivity() {
     private fun onRecommendedMoviesFetched(movies: List<Movie>) {
         recommendedMoviesAdapter.appendMovies(movies)
         attachRecommendedMoviesOnScrollListener()
-        Log.i("MoviesFetched", "$movies")
     }
 
     private fun onError(){
@@ -267,7 +263,6 @@ class MovieInfoActivity : AppCompatActivity() {
     private fun showMovieDetails(movie: Movie) {
         val intent = Intent(this, MovieInfoActivity::class.java)
         intent.putExtra(MOVIE_ID, movie.id)
-        Log.i("showMovieDetails","${movie.id}")
         intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
         intent.putExtra(MOVIE_POSTER, movie.posterPath)
         intent.putExtra(MOVIE_TITLE, movie.title)

@@ -30,8 +30,8 @@ class sign_up : AppCompatActivity() {
             startActivity(Intent(this@sign_up, sign_in::class.java))
         }
         val mbtn_register = findViewById<Button>(R.id.btn_register)
-        val msignup_email = findViewById<TextInputEditText>(R.id.textEditEmail);
-        val msignup_password = findViewById<TextInputEditText>(R.id.textEditPassword);
+        val msignup_email = findViewById<TextInputEditText>(R.id.textEditEmail)
+        val msignup_password = findViewById<TextInputEditText>(R.id.textEditPassword)
         if (mbtn_register != null && msignup_email != null && msignup_password != null){
             mbtn_register.setOnClickListener{
                 when{

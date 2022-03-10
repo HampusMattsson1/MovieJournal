@@ -90,7 +90,6 @@ class SearchFragment : Fragment() {
     private fun showMovieDetails(movie: Movie){
         val intent = Intent(requireActivity(), MovieInfoActivity::class.java)
         intent.putExtra(MOVIE_ID, movie.id)
-        Log.i("showMovieDetails","${movie.id}")
         intent.putExtra(MOVIE_BACKDROP, movie.backdropPath)
         intent.putExtra(MOVIE_POSTER, movie.posterPath)
         intent.putExtra(MOVIE_TITLE, movie.title)

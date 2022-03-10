@@ -109,7 +109,6 @@ class MovieInfoActivityNew : AppCompatActivity() {
 
         if(extras != null){
             id = extras.getInt(MOVIE_ID_2, 0)
-            Log.i("MovieInfoActivity", "$id")
             fillDetails(extras)
 
         }else{
@@ -203,7 +202,6 @@ class MovieInfoActivityNew : AppCompatActivity() {
         movieBackdrop = extras.getString(MOVIE_BACKDROP_2, "")
         moviePoster = extras.getString(MOVIE_POSTER_2, "")
         movieTitle = extras.getString(MOVIE_TITLE_2, "")
-        Log.d("sard", movieTitle)
         movieRating = extras.getFloat(MOVIE_RATING_2, 0f)
         movieReleaseDate = extras.getString(MOVIE_RELEASE_DATE_2, "")
         movieOverview = extras.getString(MOVIE_OVERVIEW_2, "")

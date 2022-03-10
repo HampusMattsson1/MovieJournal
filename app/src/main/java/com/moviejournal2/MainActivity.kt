@@ -32,6 +32,8 @@ import okhttp3.Interceptor.Companion.invoke
 import java.util.*
 import kotlin.random.Random
 import android.R.id
+import android.content.SharedPreferences
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 open class MainActivity : AppCompatActivity() {
     private val journalFragment = JournalFragment()
@@ -50,12 +52,8 @@ open class MainActivity : AppCompatActivity() {
 
     class AlarmReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            //Your code once the alarm is set off goes here
-            //You can use an intent filter to filter the specified intent
                 val intent1 = Intent(context, MainActivity::class.java)
                 intent1.putExtra("type", 4)
-                intent1.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(intent1)
                 }
             }
 
@@ -65,7 +63,7 @@ open class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val b: Bundle? = getIntent().getExtras()
+        val b: Bundle? = intent.extras
         val fragment = b?.getInt("fragment")
         if (fragment == 0) {
             replaceFragment(moviesFragment)
@@ -73,7 +71,7 @@ open class MainActivity : AppCompatActivity() {
             replaceFragment(journalFragment)
         }
 
-        val bottom_nav = findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottom_navigation)
+        val bottom_nav = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottom_nav.selectedItemId = R.id.ic_movies
         bottom_nav.setOnItemSelectedListener {
             when(it.itemId){
@@ -91,9 +89,10 @@ open class MainActivity : AppCompatActivity() {
             //System request code
             val DATA_FETCHER_RC = 123
             //Create an alarm manager
-            val mAlarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val mAlarmManager: AlarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
             val calendar: Calendar = Calendar.getInstance()
+
             calendar.set(Calendar.HOUR_OF_DAY, 14)
             calendar.set(Calendar.MINUTE, 15)
 
@@ -109,20 +108,21 @@ open class MainActivity : AppCompatActivity() {
             //Also set the interval using the AlarmManager constants
             mAlarmManager.setInexactRepeating(
                 AlarmManager.RTC,
-                calendar.getTimeInMillis(),
+                calendar.timeInMillis,
                 AlarmManager.INTERVAL_DAY,
                 pendingIntent
             )
         }
 
+
         createAlarm()
 
 
         database = FirebaseDatabase.getInstance("https://moviejournal2-default-rtdb.europe-west1.firebasedatabase.app/")
-        reference = database.getReference("users/" + globalVars.Companion.userID + "/requests")
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        reference = database.getReference("users/" + globalVars.userID + "/requests")
+        notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        reference_liked = database.getReference("users/" + globalVars.Companion.userID + "/likedlist")
+        reference_liked = database.getReference("users/" + globalVars.userID + "/likedlist")
 
         var recommendedMoviesPage = 1
 
@@ -181,12 +181,11 @@ open class MainActivity : AppCompatActivity() {
                 with(NotificationManagerCompat.from(this)) {
                     notify(0, builder.build())
                 }
-                Log.i("didi", movieToGetRecommendationsTitle.toString())
             }
             fun onError(){
                 Toast.makeText(this, getString(R.string.error_fetch_movies), Toast.LENGTH_SHORT).show()
             }
-            MoviesRepository.getRecommendedMovies(
+            getRecommendedMovies(
                 id,
                 recommendedMoviesPage,
                 ::onRecommendedMoviesFetched2,
@@ -210,7 +209,6 @@ open class MainActivity : AppCompatActivity() {
                     val randomIndex = Random.nextInt(list.size)
                     val movieToGetRecommendations = list[randomIndex]
 
-                    Log.d("hehe", movieToGetRecommendations.toString())
                     getRecommendedMovies(movieToGetRecommendations)
                 }
             }

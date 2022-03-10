@@ -213,7 +213,7 @@ class JournalFragment : Fragment() {
 
                 val title = TextView(context)
                 title.layoutParams = binding.title.layoutParams
-                title.setText("Journal entry "+(counter+1).toString())
+                title.text = "Journal entry "+(counter+1).toString()
                 title.textSize = 15.toFloat()
                 e.addView(title)
 
@@ -243,9 +243,9 @@ class JournalFragment : Fragment() {
                 val t = TextView(context)
                 t.layoutParams = binding.text.layoutParams
                 if (text[counter] != "null") {
-                    t.setText(text[counter])
+                    t.text = text[counter]
                 } else {
-                    t.setText(" ")
+                    t.text = " "
                 }
                 content.addView(t)
 

@@ -86,13 +86,13 @@ class FriendsFragment : Fragment() {
 
                     var uname = ""
 
-                    val username = TextView(getActivity())
+                    val username = TextView(activity)
                     username.layoutParams = binding.friendName.layoutParams
                     username.textSize = 25.toFloat()
 
                     reference.child(u.value.toString()).get().addOnSuccessListener { it2: DataSnapshot ->
                         if (it2.exists()) {
-                            username.setText(it2.child("username").value.toString())
+                            username.text = it2.child("username").value.toString()
                             uname = it2.child("username").value.toString()
                         }
                     }
@@ -200,7 +200,7 @@ class FriendsFragment : Fragment() {
                                 val username = TextView(context)
                                 val l3 = d.findViewById<TextView>(R.id.userText)
                                 username.layoutParams = l3.layoutParams
-                                username.setText(r)
+                                username.text = r
                                 box.addView(username)
 
                                 val add = ImageView(context)
@@ -314,7 +314,7 @@ class FriendsFragment : Fragment() {
                                 val username = TextView(context)
                                 val l3 = d.findViewById<TextView>(R.id.userText)
                                 username.layoutParams = l3.layoutParams
-                                username.setText(it.child(userid).child("username").value.toString())
+                                username.text = it.child(userid).child("username").value.toString()
                                 box.addView(username)
 
                                 val accept = ImageView(context)

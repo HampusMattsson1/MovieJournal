@@ -37,7 +37,7 @@ class ViewFriend : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        val b: Bundle? = getIntent().getExtras()
+        val b: Bundle? = intent.extras
         val id = b?.getString("id")
         val name = b?.getString("name")
 
@@ -61,7 +61,7 @@ class ViewFriend : AppCompatActivity() {
 
                     // Set view title
                     val title = it.child("username").value.toString() + " profile"
-                    binding.title.setText(title)
+                    binding.title.text = title
 
                     // Chips
                     reference.child(id).child("genres").get().addOnSuccessListener { it2: DataSnapshot ->
@@ -73,8 +73,8 @@ class ViewFriend : AppCompatActivity() {
                             while (counter < 20) {
                                 if (it2.child(counter.toString()).value != null) {
                                     var chip = Chip(this)
-                                    chip.setCheckable(false)
-                                    chip.setText(it2.child(counter.toString()).child("title").value.toString())
+                                    chip.isCheckable = false
+                                    chip.text = it2.child(counter.toString()).child("title").value.toString()
                                     view.addView(chip)
                                 }
                                 counter += 1

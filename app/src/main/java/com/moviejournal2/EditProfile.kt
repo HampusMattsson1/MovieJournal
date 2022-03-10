@@ -47,8 +47,8 @@ class EditProfile : AppCompatActivity() {
         // Chip array & variables
         var size = 0
         var counter = 0
-        var chips = List(size) { Chip(this) }.toMutableList()
-        var chipsID = arrayOf<String>().toMutableList()
+        val chips = List(size) { Chip(this) }.toMutableList()
+        val chipsID = arrayOf<String>().toMutableList()
 
 
         // Get database data
@@ -66,14 +66,14 @@ class EditProfile : AppCompatActivity() {
 
                         while (counter < size) {
                             var chip = Chip(this)
-                            chip.setCheckable(true)
+                            chip.isCheckable = true
 
                             val s1 = it.child("genres").child(counter.toString()).child("title").value.toString()
                             val s2 = it2.child(counter.toString()).child("title").value.toString()
                             if (s1 == s2) {
-                                chip.setChecked(true)
+                                chip.isChecked = true
                             }
-                            chip.setText(it2.child(counter.toString()).child("title").value.toString())
+                            chip.text = it2.child(counter.toString()).child("title").value.toString()
                             view.addView(chip)
 
                             chips.add(counter, chip)

@@ -89,7 +89,7 @@ class EditJournalEntry : AppCompatActivity() {
         val new = b?.getBoolean("new")
 
 
-        binding.date.setText(date)
+        binding.date.text = date
 
         // Upload picture
         binding.picture.setOnClickListener {
@@ -281,7 +281,7 @@ class EditJournalEntry : AppCompatActivity() {
                 cursor.close()
             }
 
-            binding.filename.setText(fileName)
+            binding.filename.text = fileName
             binding.play.setOnClickListener {
                 media.start()
             }
